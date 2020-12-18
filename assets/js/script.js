@@ -152,45 +152,43 @@ var getGifs = function () {
 
 // get our questionObj array and put it on the page
 var displayQuestions = function (questions, questionCount) {
-  if (questionCount <= questions.length) {
-    // create the question text h2 element give it a class for now and append it to html container(id=question for now)
-    var currentQuestion = document.createElement("h2");
-    currentQuestion.classList = "current-question";
-    currentQuestion.textContent = questions[questionCount].question;
-    $("#question").append(currentQuestion);
-    // create div to hold answers, give it a class for now
-    var currentAnswerSetContainer = document.createElement("div");
-    currentAnswerSetContainer.classList = "current-answer-container";
-    // create answer btns and append them to the container, give each one a class for now
-    for (i = 0; i < questions[questionCount].answers.length; i++) {
-      var currentAnswer = document.createElement("button");
-      currentAnswer.classList = "current-answer";
-      currentAnswer.setAttribute(
-        "data-val",
-        questions[questionCount].answers[i]
-      );
-      currentAnswer.textContent = questions[questionCount].answers[i];
-      currentAnswerSetContainer.append(currentAnswer);
+  // create the question text h2 element give it a class for now and append it to html container(id=question for now)
+  var currentQuestion = document.createElement("h2");
+  currentQuestion.classList = "current-question";
+  currentQuestion.textContent = questions[questionCount].question;
+  $("#question").append(currentQuestion);
+  // create div to hold answers, give it a class for now
+  var currentAnswerSetContainer = document.createElement("div");
+  currentAnswerSetContainer.classList = "current-answer-container";
+  // create answer btns and append them to the container, give each one a class for now
+  for (i = 0; i < questions[questionCount].answers.length; i++) {
+    var currentAnswer = document.createElement("button");
+    currentAnswer.classList = "current-answer";
+    currentAnswer.setAttribute("data-val", questions[questionCount].answers[i]);
+    currentAnswer.textContent = questions[questionCount].answers[i];
+    currentAnswerSetContainer.append(currentAnswer);
 
-      currentAnswer.onclick = function () {
-        if (
-          this.getAttribute("data-val") ===
-          questions[questionCount].correctAnswer
-        ) {
-          alert("You are right");
-        } else {
-          alert("You are wrong");
-        }
-        questionCount = questionCount + 1;
-        console.log(questionCount);
+    currentAnswer.onclick = function () {
+      if (
+        this.getAttribute("data-val") === questions[questionCount].correctAnswer
+      ) {
+        alert("You are right");
+      } else {
+        alert("You are wrong");
+      }
+      $("#question").empty();
+      questionCount = questionCount + 1;
+      console.log(questionCount);
+      if (questionCount < questions.length) {
         displayQuestions(questions, questionCount);
-      };
-    }
-    // append the container to the html container(id=question for now)
-    $("#question").append(currentAnswerSetContainer);
-  } else {
-    alert("Quiz is over!");
+      } else {
+        alert("Quiz is over!");
+        return;
+      }
+    };
   }
+  // append the container to the html container(id=question for now)
+  $("#question").append(currentAnswerSetContainer);
 };
 
 getQuestionsData();
