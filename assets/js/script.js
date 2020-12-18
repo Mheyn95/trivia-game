@@ -38,11 +38,12 @@ var resetToken = function (token) {
     });
 };
 
-// function to get question data based on user selections
+// function to get question data based on user selections USE LOCAL STORAGE TO RETRIEVE PAST TOKEN AND PASS INTO FUNCTION
 var getQuestionsData = function (token) {
   var difficulty = "easy";
   var type = "multiple";
   var category = 12;
+  token = "e20155578648e4bb2796841720d067872a4177a19173885b4ad73e08ff318274";
   var apiUrl =
     "https://opentdb.com/api.php?amount=10&category=" +
     category +
@@ -65,6 +66,7 @@ var getQuestionsData = function (token) {
             alert(
               "Sorry, not enough questions, please change your selections!"
             );
+            return;
           } else {
             // get array of objects to hold the data we need
             var questions = [];
@@ -92,6 +94,7 @@ var getQuestionsData = function (token) {
               [questions[i], questions[j]] = [questions[j], questions[i]];
             }
             console.log(questions);
+            displayQuestions(questions);
           }
         });
       } else {
@@ -144,4 +147,27 @@ var getGifs = function () {
       alert("Unable to connect to api");
     });
 };
-generateToken();
+
+// get our questionObj array and put it on the page
+var displayQuestions = function (questions) {
+  // we will need to increase this when we move on from each questions, for now we can hardcode for testing
+  var questionCount = 0;
+  // create the question text h2 element and append it to html container(id=question for now)
+  var currentQuestion = document.createElement("h2");
+  currentQuestion.classList = "current-question";
+  currentQuestion.textContent = questions[questionCount].question;
+  $("#question").append(currentQuestion);
+  // create div to hold answers
+  var currentAnswerSetContainer = document.createElement("div");
+  currentAnswerSetContainer.classList = "current-answer-container";
+  // create answer lis and append them to the container
+  for (i = 0; i < questions[questionCount].answers.length; i++) {
+    var currentAnswer = document.createElement("li");
+    currentAnswer.classList = "current-answer";
+    currentAnswer.textContent = questions[questionCount].answers[i];
+    currentAnswerSetContainer.append(currentAnswer);
+  }
+  // append the container to the html container(id=question for now)
+  $("#question").append(currentAnswerSetContainer);
+};
+getQuestionsData();
