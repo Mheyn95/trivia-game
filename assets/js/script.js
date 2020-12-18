@@ -155,7 +155,7 @@ var displayQuestions = function (questions, questionCount) {
   // create the question text h2 element give it a class for now and append it to html container(id=question for now)
   var currentQuestion = document.createElement("h2");
   currentQuestion.classList = "current-question";
-  currentQuestion.textContent = questions[questionCount].question;
+  currentQuestion.innerHTML = questions[questionCount].question;
   $("#question").append(currentQuestion);
   // create div to hold answers, give it a class for now
   var currentAnswerSetContainer = document.createElement("div");
@@ -165,7 +165,7 @@ var displayQuestions = function (questions, questionCount) {
     var currentAnswer = document.createElement("button");
     currentAnswer.classList = "current-answer";
     currentAnswer.setAttribute("data-val", questions[questionCount].answers[i]);
-    currentAnswer.textContent = questions[questionCount].answers[i];
+    currentAnswer.innerHTML = questions[questionCount].answers[i];
     currentAnswerSetContainer.append(currentAnswer);
 
     currentAnswer.onclick = function () {
