@@ -230,16 +230,20 @@ var generateCategory = function () {
     });
 };
 
+// open modal
 $("#start-btn").on("click", function () {
   $("#start-modal").addClass("is-active is-clipped");
   generateCategory();
 });
 
+//close modal
 $("#start-modal .close").on("click", function () {
   $("#start-modal").removeClass("is-active is-clipped");
 });
 
+// submit user selections in modal to the api call
 $("#start-modal .is-success").on("click", function () {
+  // get user inputs from the modal and store them to get put into the api call
   var difficulty = "";
   if ($("#difficultySelect").val() != "Any Difficulty") {
     difficulty = $("#difficultySelect").val();
@@ -256,6 +260,7 @@ $("#start-modal .is-success").on("click", function () {
   }
   var category = "";
   if ($("#categorySelect").val() != "Any Category") {
+    // switch to get the correct category id for the users selection
     switch ($("#categorySelect").val()) {
       case "General Knowledge":
         category = 9;
@@ -334,8 +339,11 @@ $("#start-modal .is-success").on("click", function () {
   }
 
   var token = localStorage.getItem("token");
+  // hide the modal so we can take the quiz
   $("#start-modal").removeClass("is-active is-clipped");
+  // run function to start the quiz with the stored user inputs
   getQuestionsData(difficulty, type, category, token);
 });
 
+// call function to generate a session token if there is not a token in local storage
 getToken();
