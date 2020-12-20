@@ -6,7 +6,7 @@ var generateToken = function () {
       // request was successful
       if (response.ok) {
         response.json().then(function (data) {
-          getQuestionsData(data.token);
+          saveToken(data.token);
         });
       } else {
         alert("Error: " + response.statusText);
@@ -18,15 +18,32 @@ var generateToken = function () {
     });
 };
 
+// save token to local storage
+var saveToken = function (token) {
+  // clear out current value
+  localStorage.removeItem("token");
+
+  // push token into localstorage
+  localStorage.setItem("token", token);
+};
+
+// check if token exists in local storage
+var getToken = function () {
+  var token = localStorage.getItem("token");
+  if (!token) {
+    generateToken();
+  }
+};
+
 // function to be used if we get a repsonse from api that tells us we ran out of unique questions, this will reset the token so old questions can be used again
-var resetToken = function (token) {
+var resetToken = function (difficulty, type, category, token) {
   var apiUrl = "https://opentdb.com/api_token.php?command=reset&token=" + token;
   fetch(apiUrl)
     .then(function (response) {
       // request was successful
       if (response.ok) {
         response.json().then(function (data) {
-          getQuestionsData(token);
+          getQuestionsData(difficulty, type, category, token);
         });
       } else {
         alert("Error: " + response.statusText);
@@ -38,21 +55,17 @@ var resetToken = function (token) {
     });
 };
 
-// function to get question data based on user selections USE LOCAL STORAGE TO RETRIEVE PAST TOKEN AND PASS INTO FUNCTION
-var getQuestionsData = function (token) {
-  var difficulty = "easy";
-  var type = "multiple";
-  var category = 12;
-  token = "e20155578648e4bb2796841720d067872a4177a19173885b4ad73e08ff318274";
+// function to get question data based on user selections
+var getQuestionsData = function (difficulty, type, category, token) {
   var apiUrl =
-    "https://opentdb.com/api.php?amount=10&category=" +
+    "https://opentdb.com/api.php?amount=10" +
     category +
-    "&difficulty=" +
     difficulty +
-    "&type=" +
     type +
     "&token=" +
     token;
+
+  console.log(apiUrl);
   fetch(apiUrl)
     .then(function (response) {
       // request was successful
@@ -60,7 +73,7 @@ var getQuestionsData = function (token) {
         response.json().then(function (data) {
           // check if we need to reset token
           if (data.response_code === 4) {
-            resetToken(token);
+            resetToken(difficulty, type, category, token);
             // check if there are enough questions for the current request
           } else if (data.response_code === 1) {
             alert(
@@ -192,40 +205,145 @@ var displayQuestions = function (questions, questionCount) {
 };
 
 // get and fills out category
-var generateCategory = function() {
-    var categoryUrl = 'https://opentdb.com/api_category.php'
+var generateCategory = function () {
+  var categoryUrl = "https://opentdb.com/api_category.php";
 
-    fetch(categoryUrl)
-        .then(function(categoryResponse) {
-            if (categoryResponse.ok) {
-                return categoryResponse.json();
-            }
-            else {
-                alert('Error: ' + categoryResponse.statusText);
-            }
-        })
-        .then(function(categoryResponse) {
-            var categorySeclectEl = document.getElementById('categorySelect');
-            for(var i = 0; i < categoryResponse.trivia_categories.length; i++) {
-                var optionEl = document.createElement('option');
-                optionEl.innerHTML = categoryResponse.trivia_categories[i].name;
-                optionEl.setAttribute('id', categoryResponse.trivia_categories[i].id);
-                categorySeclectEl.appendChild(optionEl);
-            }
-        })
-        .catch(function (error) {
-            alert('Unable to connect to Trivia API');
-        })
+  fetch(categoryUrl)
+    .then(function (categoryResponse) {
+      if (categoryResponse.ok) {
+        return categoryResponse.json();
+      } else {
+        alert("Error: " + categoryResponse.statusText);
+      }
+    })
+    .then(function (categoryResponse) {
+      var categorySelectEl = document.getElementById("categorySelect");
+      for (var i = 0; i < categoryResponse.trivia_categories.length; i++) {
+        var optionEl = document.createElement("option");
+        optionEl.innerHTML = categoryResponse.trivia_categories[i].name;
+        optionEl.setAttribute("id", categoryResponse.trivia_categories[i].id);
+        categorySelectEl.appendChild(optionEl);
+      }
+    })
+    .catch(function (error) {
+      alert("Unable to connect to Trivia API");
+    });
 };
 
-$('#modal-button').on('click', function() {
-    $('#start-modal').addClass('is-active is-clipped');
-    generateCategory();
+// open modal
+$("#start-btn").on("click", function () {
+  $("#start-modal").addClass("is-active is-clipped");
+  generateCategory();
 });
 
-$('#start-modal .close').on('click', function() {
-    $('#start-modal').removeClass('is-active is-clipped');
+//close modal
+$("#start-modal .close").on("click", function () {
+  $("#start-modal").removeClass("is-active is-clipped");
 });
 
+// submit user selections in modal to the api call
+$("#start-modal .is-success").on("click", function () {
+  // get user inputs from the modal and store them to get put into the api call
+  var difficulty = "";
+  if ($("#difficultySelect").val() != "Any Difficulty") {
+    difficulty = $("#difficultySelect").val();
+    difficulty = difficulty.toLowerCase();
+    difficulty = "&difficulty=" + difficulty;
+  }
+  var type = "";
+  if ($("#typeSelect").val() != "Any Type") {
+    if ($("#typeSelect").val() === "Multiple Choice") {
+      type = "&type=multiple";
+    } else {
+      type = "&type=boolean";
+    }
+  }
+  var category = "";
+  if ($("#categorySelect").val() != "Any Category") {
+    // switch to get the correct category id for the users selection
+    switch ($("#categorySelect").val()) {
+      case "General Knowledge":
+        category = 9;
+        break;
+      case "Entertainment: Books":
+        category = 10;
+        break;
+      case "Entertainment: Film":
+        category = 11;
+        break;
+      case "Entertainment: Music":
+        category = 12;
+        break;
+      case "Entertainment: Musicals and Theatres":
+        category = 13;
+        break;
+      case "Entertainment: Television":
+        category = 14;
+        break;
+      case "Entertainment: Video Games":
+        category = 15;
+        break;
+      case "Entertainment: Board Games":
+        category = 16;
+        break;
+      case "Science and Nature":
+        category = 17;
+        break;
+      case "Science: Computers":
+        category = 18;
+        break;
+      case "Science: Mathematics":
+        category = 19;
+        break;
+      case "Mythology":
+        category = 20;
+        break;
+      case "Sports":
+        category = 21;
+        break;
+      case "Geography":
+        category = 22;
+        break;
+      case "History":
+        category = 23;
+        break;
+      case "Politics":
+        category = 24;
+        break;
+      case "Art":
+        category = 25;
+        break;
+      case "Celebrities":
+        category = 26;
+        break;
+      case "Animals":
+        category = 27;
+        break;
+      case "Vehicles":
+        category = 28;
+        break;
+      case "Entertainment: Comics":
+        category = 29;
+        break;
+      case "Science: Gadgets":
+        category = 30;
+        break;
+      case "Entertainment: Japanese Anime and Manga":
+        category = 31;
+        break;
+      case "Entertainment: Cartoon and Animations":
+        category = 32;
+        break;
+    }
+    category = "&category=" + category;
+  }
 
-getQuestionsData();
+  var token = localStorage.getItem("token");
+  // hide the modal so we can take the quiz
+  $("#start-modal").removeClass("is-active is-clipped");
+  // run function to start the quiz with the stored user inputs
+  getQuestionsData(difficulty, type, category, token);
+});
+
+// call function to generate a session token if there is not a token in local storage
+getToken();
