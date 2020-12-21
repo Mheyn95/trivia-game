@@ -55,7 +55,7 @@ var resetToken = function (difficulty, type, category, token) {
     });
 };
 
-// function to get question data based on user selections
+// function to get question data based on user selections and to start and display timer
 var getQuestionsData = function (difficulty, type, category, token) {
   var apiUrl =
     "https://opentdb.com/api.php?amount=10" +
@@ -74,6 +74,11 @@ var getQuestionsData = function (difficulty, type, category, token) {
           // check if we need to reset token
           if (data.response_code === 4) {
             resetToken(difficulty, type, category, token);
+            // check to see if the session token is valid, if it is not generate a new one and run function again
+          } else if (data.response_code === 3) {
+            generateToken();
+            var token = localStorage.getItem("token");
+            getQuestionsData(difficulty, type, category, token);
             // check if there are enough questions for the current request
           } else if (data.response_code === 1) {
             alert(
@@ -120,6 +125,23 @@ var getQuestionsData = function (difficulty, type, category, token) {
     .catch(function (error) {
       alert("Unable to connect to api");
     });
+
+  // set where to start the timer
+  var timeLeft = 120;
+
+  // initiate timer
+  var timeCounter = setInterval(function () {
+    if (timeLeft < 1) {
+      clearInterval(timeCounter);
+      $("#timer-ctn").empty();
+      return;
+    }
+    $("#timer-ctn").empty();
+    var timerDiv = document.createElement("p");
+    timerDiv.textContent = "Time Remaing: " + timeLeft + " seconds";
+    $("#timer-ctn").append(timerDiv);
+    timeLeft--;
+  }, 1000);
 };
 
 // get gifs for thumbs up(question right) and thumbs down(question wrong) from the giphy api.
@@ -244,12 +266,12 @@ $("#start-modal .close").on("click", function () {
 // submit user selections in modal to the api call
 $("#start-modal .is-success").on("click", function () {
   // get user inputs from the modal and store them to get put into the api call
+
   var difficulty = "";
   if ($("#difficultySelect").val() != "Any Difficulty") {
-    difficulty = $("#difficultySelect").val();
-    difficulty = difficulty.toLowerCase();
-    difficulty = "&difficulty=" + difficulty;
+    difficulty = "&difficulty=" + $("#difficultySelect").val().toLowerCase();
   }
+
   var type = "";
   if ($("#typeSelect").val() != "Any Type") {
     if ($("#typeSelect").val() === "Multiple Choice") {
@@ -258,87 +280,15 @@ $("#start-modal .is-success").on("click", function () {
       type = "&type=boolean";
     }
   }
+
   var category = "";
   if ($("#categorySelect").val() != "Any Category") {
-    // switch to get the correct category id for the users selection
-    switch ($("#categorySelect").val()) {
-      case "General Knowledge":
-        category = 9;
-        break;
-      case "Entertainment: Books":
-        category = 10;
-        break;
-      case "Entertainment: Film":
-        category = 11;
-        break;
-      case "Entertainment: Music":
-        category = 12;
-        break;
-      case "Entertainment: Musicals and Theatres":
-        category = 13;
-        break;
-      case "Entertainment: Television":
-        category = 14;
-        break;
-      case "Entertainment: Video Games":
-        category = 15;
-        break;
-      case "Entertainment: Board Games":
-        category = 16;
-        break;
-      case "Science and Nature":
-        category = 17;
-        break;
-      case "Science: Computers":
-        category = 18;
-        break;
-      case "Science: Mathematics":
-        category = 19;
-        break;
-      case "Mythology":
-        category = 20;
-        break;
-      case "Sports":
-        category = 21;
-        break;
-      case "Geography":
-        category = 22;
-        break;
-      case "History":
-        category = 23;
-        break;
-      case "Politics":
-        category = 24;
-        break;
-      case "Art":
-        category = 25;
-        break;
-      case "Celebrities":
-        category = 26;
-        break;
-      case "Animals":
-        category = 27;
-        break;
-      case "Vehicles":
-        category = 28;
-        break;
-      case "Entertainment: Comics":
-        category = 29;
-        break;
-      case "Science: Gadgets":
-        category = 30;
-        break;
-      case "Entertainment: Japanese Anime and Manga":
-        category = 31;
-        break;
-      case "Entertainment: Cartoon and Animations":
-        category = 32;
-        break;
-    }
-    category = "&category=" + category;
+    category =
+      "&category=" + $("#categorySelect").find("option:selected").attr("id");
   }
 
   var token = localStorage.getItem("token");
+
   // hide the modal so we can take the quiz
   $("#start-modal").removeClass("is-active is-clipped");
   // run function to start the quiz with the stored user inputs
