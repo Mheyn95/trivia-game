@@ -145,45 +145,45 @@ var getQuestionsData = function (difficulty, type, category, token) {
 };
 
 // get gifs for thumbs up(question right) and thumbs down(question wrong) from the giphy api.
-var getGifs = function () {
-  //get thumbs up gif
-  var apiUrl =
-    "https://api.giphy.com/v1/gifs/111ebonMs90YLu?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
-  fetch(apiUrl)
-    .then(function (response) {
-      // request was successful
-      if (response.ok) {
-        response.json().then(function (data) {
-          console.log(data);
-        });
-      } else {
-        alert("Error: " + response.statusText);
-        return;
-      }
-    })
-    .catch(function (error) {
-      alert("Unable to connect to api");
-    });
+// var getGifs = function () {
+//   //get thumbs up gif
+//   var apiUrl =
+//     "https://api.giphy.com/v1/gifs/111ebonMs90YLu?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
+//   fetch(apiUrl)
+//     .then(function (response) {
+//       // request was successful
+//       if (response.ok) {
+//         response.json().then(function (data) {
+//           var rightUrl = data.data.images.original.url;
+//         });
+//       } else {
+//         alert("Error: " + response.statusText);
+//         return;
+//       }
+//     })
+//     .catch(function (error) {
+//       alert("Unable to connect to api");
+//     });
 
-  //get thumbs down gif
-  apiUrl =
-    "https://api.giphy.com/v1/gifs/qiDb8McXyj6Eg?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
-  fetch(apiUrl)
-    .then(function (response) {
-      // request was successful
-      if (response.ok) {
-        response.json().then(function (data) {
-          console.log(data);
-        });
-      } else {
-        alert("Error: " + response.statusText);
-        return;
-      }
-    })
-    .catch(function (error) {
-      alert("Unable to connect to api");
-    });
-};
+//   //get thumbs down gif
+//   apiUrl =
+//     "https://api.giphy.com/v1/gifs/qiDb8McXyj6Eg?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
+//   fetch(apiUrl)
+//     .then(function (response) {
+//       // request was successful
+//       if (response.ok) {
+//         response.json().then(function (data) {
+//           var wrongUrl = data.data.images.original.url;
+//         });
+//       } else {
+//         alert("Error: " + response.statusText);
+//         return;
+//       }
+//     })
+//     .catch(function (error) {
+//       alert("Unable to connect to api");
+//     });
+// };
 
 // get our questionObj array and put it on the page
 var displayQuestions = function (questions, questionCount) {
@@ -208,8 +208,49 @@ var displayQuestions = function (questions, questionCount) {
         this.getAttribute("data-val") === questions[questionCount].correctAnswer
       ) {
         alert("You are right");
+        var apiUrl =
+          "https://api.giphy.com/v1/gifs/111ebonMs90YLu?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
+        fetch(apiUrl)
+          .then(function (response) {
+            // request was successful
+            if (response.ok) {
+              response.json().then(function (data) {
+                var rightUrl = data.data.images.original.url;
+                var gifImgEl = document.createElement("img");
+                gifImgEl.setAttribute("src", rightUrl);
+                $("#gif-ctn").append(gifImgEl);
+              });
+            } else {
+              alert("Error: " + response.statusText);
+              return;
+            }
+          })
+          .catch(function (error) {
+            alert("Unable to connect to api");
+          });
       } else {
         alert("You are wrong");
+        //get thumbs down gif
+        apiUrl =
+          "https://api.giphy.com/v1/gifs/qiDb8McXyj6Eg?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
+        fetch(apiUrl)
+          .then(function (response) {
+            // request was successful
+            if (response.ok) {
+              response.json().then(function (data) {
+                var wrongUrl = data.data.images.original.url;
+                var gifImgEl = document.createElement("img");
+                gifImgEl.setAttribute("src", wrongUrl);
+                $("#gif-ctn").append(gifImgEl);
+              });
+            } else {
+              alert("Error: " + response.statusText);
+              return;
+            }
+          })
+          .catch(function (error) {
+            alert("Unable to connect to api");
+          });
       }
       $("#question").empty();
       questionCount = questionCount + 1;
