@@ -270,6 +270,7 @@ $("#start-modal .close").on("click", function () {
 // close prompt modal
 $("#prompt-modal .close").on("click", function () {
   $("#prompt-modal").removeClass("is-active is-clipped");
+  promptContent.textContent = "";
 });
 
 // submit user selections in modal to the api call
