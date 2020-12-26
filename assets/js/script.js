@@ -1,5 +1,5 @@
 // get promptContent <p> to display prompts to the user
-var promptContent = document.getElementById('promptContent');
+var promptContent = document.getElementById("promptContent");
 
 // generate session token to make sure the same questions will not be reused, unless they run out
 var generateToken = function () {
@@ -96,6 +96,7 @@ var getQuestionsData = function (difficulty, type, category, token) {
                 question: data.results[i].question,
                 correctAnswer: data.results[i].correct_answer,
                 answers: data.results[i].incorrect_answers,
+                difficulty: data.results[i].difficulty,
               };
               //add the correct answer to the list of possible answers and randomize it
               questionObj.answers.push(questionObj.correctAnswer);
@@ -132,6 +133,9 @@ var getQuestionsData = function (difficulty, type, category, token) {
 
 // get our questionObj array and put it on the page
 var displayQuestions = function (questions, questionCount, timeLeft) {
+  // hide start and high score buttons
+  $("#start-btn").hide();
+  $("#high-btn").hide();
   // set where to start the timer
   if (timeLeft === 120) {
     // initiate timer
@@ -276,16 +280,15 @@ $("#prompt-modal .close").on("click", function () {
 // submit user selections in modal to the api call
 $("#start-modal .is-success").on("click", function () {
   // get user inputs from the modal and store them to get put into the api call
-  if (!$('#playerName').val()) {
+  if (!$("#playerName").val()) {
     $("#prompt-modal").addClass("is-active is-clipped");
     promptContent.textContent = "Please enter a Player Name!";
-  }
-  else {
+  } else {
     var difficulty = "";
     if ($("#difficultySelect").val() != "Any Difficulty") {
       difficulty = "&difficulty=" + $("#difficultySelect").val().toLowerCase();
     }
-  
+
     var type = "";
     if ($("#typeSelect").val() != "Any Type") {
       if ($("#typeSelect").val() === "Multiple Choice") {
@@ -294,15 +297,15 @@ $("#start-modal .is-success").on("click", function () {
         type = "&type=boolean";
       }
     }
-  
+
     var category = "";
     if ($("#categorySelect").val() != "Any Category") {
       category =
         "&category=" + $("#categorySelect").find("option:selected").attr("id");
     }
-  
+
     var token = localStorage.getItem("token");
-  
+
     // hide the modal so we can take the quiz
     $("#start-modal").removeClass("is-active is-clipped");
     // run function to start the quiz with the stored user inputs
