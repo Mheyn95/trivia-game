@@ -1,3 +1,6 @@
+// get promptContent <p> to display prompts to the user
+var promptContent = document.getElementById('promptContent');
+
 // generate session token to make sure the same questions will not be reused, unless they run out
 var generateToken = function () {
   var apiUrl = "https://opentdb.com/api_token.php?command=request";
@@ -253,47 +256,57 @@ var generateCategory = function () {
     });
 };
 
-// open modal
+// open start modal
 $("#start-btn").on("click", function () {
   $("#start-modal").addClass("is-active is-clipped");
   generateCategory();
 });
 
-//close modal
+//close start modal
 $("#start-modal .close").on("click", function () {
   $("#start-modal").removeClass("is-active is-clipped");
+});
+
+// close prompt modal
+$("#prompt-modal .close").on("click", function () {
+  $("#prompt-modal").removeClass("is-active is-clipped");
 });
 
 // submit user selections in modal to the api call
 $("#start-modal .is-success").on("click", function () {
   // get user inputs from the modal and store them to get put into the api call
-
-  var difficulty = "";
-  if ($("#difficultySelect").val() != "Any Difficulty") {
-    difficulty = "&difficulty=" + $("#difficultySelect").val().toLowerCase();
+  if (!$('#playerName').val()) {
+    $("#prompt-modal").addClass("is-active is-clipped");
+    promptContent.textContent = "Please enter a Player Name!";
   }
-
-  var type = "";
-  if ($("#typeSelect").val() != "Any Type") {
-    if ($("#typeSelect").val() === "Multiple Choice") {
-      type = "&type=multiple";
-    } else {
-      type = "&type=boolean";
+  else {
+    var difficulty = "";
+    if ($("#difficultySelect").val() != "Any Difficulty") {
+      difficulty = "&difficulty=" + $("#difficultySelect").val().toLowerCase();
     }
+  
+    var type = "";
+    if ($("#typeSelect").val() != "Any Type") {
+      if ($("#typeSelect").val() === "Multiple Choice") {
+        type = "&type=multiple";
+      } else {
+        type = "&type=boolean";
+      }
+    }
+  
+    var category = "";
+    if ($("#categorySelect").val() != "Any Category") {
+      category =
+        "&category=" + $("#categorySelect").find("option:selected").attr("id");
+    }
+  
+    var token = localStorage.getItem("token");
+  
+    // hide the modal so we can take the quiz
+    $("#start-modal").removeClass("is-active is-clipped");
+    // run function to start the quiz with the stored user inputs
+    getQuestionsData(difficulty, type, category, token);
   }
-
-  var category = "";
-  if ($("#categorySelect").val() != "Any Category") {
-    category =
-      "&category=" + $("#categorySelect").find("option:selected").attr("id");
-  }
-
-  var token = localStorage.getItem("token");
-
-  // hide the modal so we can take the quiz
-  $("#start-modal").removeClass("is-active is-clipped");
-  // run function to start the quiz with the stored user inputs
-  getQuestionsData(difficulty, type, category, token);
 });
 
 // call function to generate a session token if there is not a token in local storage

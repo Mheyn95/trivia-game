@@ -38,10 +38,7 @@
 
     <div id="question"></div>
 
-    <button class="button is-primary is-large" id="modal-button">
-      Launch card modal
-    </button>
-    <!-- Modal -->
+    <!-- Start Game Modal -->
     <div class="modal" id="start-modal">
       <div class="modal-background"></div>
       <div class="modal-card">
@@ -54,7 +51,7 @@
           <div class="field">
             <label class="label">Player Name</label>
             <div class="control">
-              <input class="input" type="text" placeholder="Enter Name" />
+              <input class="input" id="playerName" type="text" placeholder="Enter Name" />
             </div>
             <label class="label">Select Category:</label>
             <div class="control">
@@ -91,6 +88,25 @@
           <button class="button is-success">Start Game</button>
           <button class="button close">Cancel</button>
         </footer>
+      </div>
+    </div>
+
+    <!-- Prompt Modal -->
+    <div class="modal" id="prompt-modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <article class="media">
+            <div class="media-content">
+              <div class="media-left">
+                <button class="delete close is-pulled-right" aria-label="close"></button>
+              </div>
+              <div class="content">
+                <p id="promptContent"></p>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
     </div>
 
