@@ -68,7 +68,6 @@ var getQuestionsData = function (difficulty, type, category, token) {
     "&token=" +
     token;
 
-  console.log(apiUrl);
   fetch(apiUrl)
     .then(function (response) {
       // request was successful
@@ -117,8 +116,7 @@ var getQuestionsData = function (difficulty, type, category, token) {
               const j = Math.floor(Math.random() * (i + 1));
               [questions[i], questions[j]] = [questions[j], questions[i]];
             }
-            console.log(questions);
-            displayQuestions(questions, questionCount, 120);
+            displayQuestions(questions, questionCount, 120, difficulty, 0);
           }
         });
       } else {
@@ -132,7 +130,13 @@ var getQuestionsData = function (difficulty, type, category, token) {
 };
 
 // get our questionObj array and put it on the page
-var displayQuestions = function (questions, questionCount, timeLeft) {
+var displayQuestions = function (
+  questions,
+  questionCount,
+  timeLeft,
+  userDifficulty,
+  score
+) {
   // hide start and high score buttons
   $("#start-btn").hide();
   $("#high-btn").hide();
@@ -172,7 +176,14 @@ var displayQuestions = function (questions, questionCount, timeLeft) {
       if (
         this.getAttribute("data-val") === questions[questionCount].correctAnswer
       ) {
-        alert("You are right");
+        if (userDifficulty === "&difficulty=easy") {
+          score = score + 3;
+        } else if (userDifficulty === "&difficulty=hard") {
+          score = score + 10;
+        } else {
+          score = score + 5;
+        }
+        console.log(score);
         var apiUrl =
           "https://api.giphy.com/v1/gifs/111ebonMs90YLu?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
         fetch(apiUrl)
@@ -195,7 +206,14 @@ var displayQuestions = function (questions, questionCount, timeLeft) {
             alert("Unable to connect to api");
           });
       } else {
-        alert("You are wrong");
+        if (userDifficulty === "&difficulty=easy") {
+          score = score - 1;
+        } else if (userDifficulty === "&difficulty=hard") {
+          score = score - 6;
+        } else {
+          score = score - 3;
+        }
+        console.log(score);
         //get thumbs down gif
         apiUrl =
           "https://api.giphy.com/v1/gifs/qiDb8McXyj6Eg?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
@@ -221,9 +239,14 @@ var displayQuestions = function (questions, questionCount, timeLeft) {
       }
       $("#question").empty();
       questionCount = questionCount + 1;
-      console.log(questionCount);
       if (questionCount < questions.length) {
-        displayQuestions(questions, questionCount, timeLeft);
+        displayQuestions(
+          questions,
+          questionCount,
+          timeLeft,
+          userDifficulty,
+          score
+        );
       } else {
         alert("Quiz is over!");
         return;
