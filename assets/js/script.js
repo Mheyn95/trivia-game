@@ -61,7 +61,7 @@ var resetToken = function (difficulty, type, category, token) {
 // function to get question data based on user selections and to start and display timer
 var getQuestionsData = function (difficulty, type, category, token, name) {
   var apiUrl =
-    "https://opentdb.com/api.php?amount=10" +
+    "https://opentdb.com/api.php?amount=1" +
     category +
     difficulty +
     type +
@@ -279,10 +279,14 @@ var endGame = function (name, score, timeCounter) {
   // get rid of timer and remove it
   clearInterval(timeCounter);
   $("#timer-ctn").empty();
+
   //set up our score display
-  var newScore = name + " - " + score;
-  // create div to hold score list
-  var highScoreCtn = document.createElement("div");
+  var newScore = {
+    name: name,
+    score: score,
+    combo: name + " - " + score,
+  };
+
   // pull all scores from localStorage
   var scores = localStorage.getItem("scores");
   if (!scores) {
@@ -290,6 +294,7 @@ var endGame = function (name, score, timeCounter) {
   } else {
     scores = JSON.parse(scores);
     scores.push(newScore);
+    scores.sort((a, b) => (a.score > b.score ? 1 : -1));
   }
 
   // store all scores back into localStorage
@@ -298,10 +303,9 @@ var endGame = function (name, score, timeCounter) {
   // display all scores on the page
   for (i = 0; i < scores.length; i++) {
     var scoreLi = document.createElement("li");
-    scoreLi.textContent = scores[i];
+    scoreLi.textContent = scores[i].combo;
     $("#score-ctn").prepend(scoreLi);
   }
-  // $("#score-ctn").append(highScoreCtn);
 };
 // get and fills out category
 var generateCategory = function () {
