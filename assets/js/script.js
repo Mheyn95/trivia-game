@@ -59,16 +59,15 @@ var resetToken = function (difficulty, type, category, token) {
 };
 
 // function to get question data based on user selections and to start and display timer
-var getQuestionsData = function (difficulty, type, category, token) {
+var getQuestionsData = function (difficulty, type, category, token, name) {
   var apiUrl =
-    "https://opentdb.com/api.php?amount=10" +
+    "https://opentdb.com/api.php?amount=1" +
     category +
     difficulty +
     type +
     "&token=" +
     token;
 
-  console.log(apiUrl);
   fetch(apiUrl)
     .then(function (response) {
       // request was successful
@@ -117,8 +116,14 @@ var getQuestionsData = function (difficulty, type, category, token) {
               const j = Math.floor(Math.random() * (i + 1));
               [questions[i], questions[j]] = [questions[j], questions[i]];
             }
-            console.log(questions);
-            displayQuestions(questions, questionCount, 120);
+            displayQuestions(
+              questions,
+              questionCount,
+              120,
+              difficulty,
+              0,
+              name
+            );
           }
         });
       } else {
@@ -132,7 +137,14 @@ var getQuestionsData = function (difficulty, type, category, token) {
 };
 
 // get our questionObj array and put it on the page
-var displayQuestions = function (questions, questionCount, timeLeft) {
+var displayQuestions = function (
+  questions,
+  questionCount,
+  timeLeft,
+  userDifficulty,
+  score,
+  name
+) {
   // hide start and high score buttons
   $("#start-btn").hide();
   $("#high-btn").hide();
@@ -143,7 +155,7 @@ var displayQuestions = function (questions, questionCount, timeLeft) {
       if (timeLeft < 1) {
         clearInterval(timeCounter);
         $("#timer-ctn").empty();
-        return;
+        endGame(name, score, timeCounter);
       }
       $("#timer-ctn").empty();
       var timerDiv = document.createElement("p");
@@ -172,7 +184,14 @@ var displayQuestions = function (questions, questionCount, timeLeft) {
       if (
         this.getAttribute("data-val") === questions[questionCount].correctAnswer
       ) {
-        alert("You are right");
+        if (userDifficulty === "&difficulty=easy") {
+          score = score + 3;
+        } else if (userDifficulty === "&difficulty=hard") {
+          score = score + 10;
+        } else {
+          score = score + 5;
+        }
+        console.log(score);
         var apiUrl =
           "https://api.giphy.com/v1/gifs/111ebonMs90YLu?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
         fetch(apiUrl)
@@ -195,7 +214,14 @@ var displayQuestions = function (questions, questionCount, timeLeft) {
             alert("Unable to connect to api");
           });
       } else {
-        alert("You are wrong");
+        if (userDifficulty === "&difficulty=easy") {
+          score = score - 1;
+        } else if (userDifficulty === "&difficulty=hard") {
+          score = score - 6;
+        } else {
+          score = score - 3;
+        }
+        console.log(score);
         //get thumbs down gif
         apiUrl =
           "https://api.giphy.com/v1/gifs/qiDb8McXyj6Eg?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
@@ -220,20 +246,67 @@ var displayQuestions = function (questions, questionCount, timeLeft) {
           });
       }
       $("#question").empty();
+      $("#gif-ctn").empty();
+
       questionCount = questionCount + 1;
-      console.log(questionCount);
       if (questionCount < questions.length) {
-        displayQuestions(questions, questionCount, timeLeft);
+        displayQuestions(
+          questions,
+          questionCount,
+          timeLeft,
+          userDifficulty,
+          score,
+          name
+        );
       } else {
-        alert("Quiz is over!");
+        $("#question").empty();
+        $("#gif-ctn").remove();
+        endGame(name, score, timeCounter);
         return;
       }
     };
   }
   // append the container to the html container(id=question for now)
   $("#question").append(currentAnswerSetContainer);
+  // append the current score below the question
+  var currentScore = document.createElement("p");
+  currentScore.textContent = name + " has a score of " + score;
+  $("#question").append(currentScore);
 };
 
+// end the game and display high scores
+var endGame = function (name, score, timeCounter) {
+  // get rid of timer and remove it
+  clearInterval(timeCounter);
+  $("#timer-ctn").empty();
+
+  //set up our score display
+  var newScore = {
+    name: name,
+    score: score,
+    combo: name + " - " + score,
+  };
+
+  // pull all scores from localStorage
+  var scores = localStorage.getItem("scores");
+  if (!scores) {
+    scores = [newScore];
+  } else {
+    scores = JSON.parse(scores);
+    scores.push(newScore);
+    scores.sort((a, b) => (a.score > b.score ? 1 : -1));
+  }
+
+  // store all scores back into localStorage
+  localStorage.setItem("scores", JSON.stringify(scores));
+
+  // display all scores on the page
+  for (i = 0; i < scores.length; i++) {
+    var scoreLi = document.createElement("li");
+    scoreLi.textContent = scores[i].combo;
+    $("#score-ctn").prepend(scoreLi);
+  }
+};
 // get and fills out category
 var generateCategory = function () {
   var categoryUrl = "https://opentdb.com/api_category.php";
@@ -306,10 +379,12 @@ $("#start-modal .is-success").on("click", function () {
 
     var token = localStorage.getItem("token");
 
+    var name = $("#playerName").val();
+
     // hide the modal so we can take the quiz
     $("#start-modal").removeClass("is-active is-clipped");
     // run function to start the quiz with the stored user inputs
-    getQuestionsData(difficulty, type, category, token);
+    getQuestionsData(difficulty, type, category, token, name);
   }
 });
 
