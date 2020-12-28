@@ -1,6 +1,5 @@
 #header {
     color: rgb(31, 165, 206);
-    font-size: ;
 }
 
 #timer-ctn {
@@ -8,10 +7,11 @@
 }
 
 #hero-img {
-    background-image: url("../images/trivia.jpg");
+    background-image: url("../images/trivia-night.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 100%;
-    width: auto;
+}
+
+#question {
 }
