@@ -13,5 +13,6 @@
     background-size: cover;
 }
 
-#question {
+.current-question {
+    justify-content: center;
 }

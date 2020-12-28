@@ -166,16 +166,16 @@ var displayQuestions = function (
   }
   // create the question text h2 element give it a class for now and append it to html container(id=question for now)
   var currentQuestion = document.createElement("h2");
-  currentQuestion.classList = "current-question";
+  currentQuestion.classList = "current-question is-flex is-justify-content-center has-text-weight-semibold my-2";
   currentQuestion.innerHTML = questions[questionCount].question;
   $("#question").append(currentQuestion);
   // create div to hold answers, give it a class for now
   var currentAnswerSetContainer = document.createElement("div");
-  currentAnswerSetContainer.classList = "current-answer-container";
+  currentAnswerSetContainer.classList = "current-answer-container is-flex is-justify-content-center my-2";
   // create answer btns and append them to the container, give each one a class for now
   for (i = 0; i < questions[questionCount].answers.length; i++) {
     var currentAnswer = document.createElement("button");
-    currentAnswer.classList = "current-answer";
+    currentAnswer.classList = "current-answer button is-success mx-1";
     currentAnswer.setAttribute("data-val", questions[questionCount].answers[i]);
     currentAnswer.innerHTML = questions[questionCount].answers[i];
     currentAnswerSetContainer.append(currentAnswer);
@@ -270,6 +270,7 @@ var displayQuestions = function (
   $("#question").append(currentAnswerSetContainer);
   // append the current score below the question
   var currentScore = document.createElement("p");
+  currentScore.classList = "is-flex is-justify-content-center has-text-weight-semibold my-2";
   currentScore.textContent = name + " has a score of " + score;
   $("#question").append(currentScore);
 };
