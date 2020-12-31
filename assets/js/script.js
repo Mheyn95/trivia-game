@@ -2,14 +2,82 @@
 var promptContent = document.getElementById("promptContent");
 
 // get countdown <p>
-var countdownEl = document.getElementById('timer-ctn');
+var questionHeaderEl = document.getElementById('questionsHeader');
 
-// set timeLimit
+// set global variables
 var timeLimit = 120;
+var playerName = "";
+var score = 0;
+var highscoreArray = [];
+var token;
+var questions = [];
+// we will need to increase this when we move on from each question
+var questionCount = 0;
+var difficulty = "";
+var type = "";
+var category = "";
+var timeInterval;
+
+// start game
+var startGame = function () {
+  // hide start and high score buttons
+  $("#start-btn").hide();
+  $("#high-btn").hide();
+  // start Timmer
+  countdownTimer();
+  // call function to generate a session token if there is not a token in local storage
+  highscoreArray = [];
+  loadHighscore();
+  getToken();
+  // token = localStorage.getItem("token");
+
+  $("#questions-modal").addClass("is-active is-clipped");
+  
+  // get and display questions
+  getQuestionsData();
+};
+
+var countdownTimer = function() {
+  // start of the countdown timer
+  timeInterval = setInterval(function () {
+      if (timeLimit > 1) {
+          // display timer and countdown
+          questionHeaderEl.textContent = timeLimit + ' seconds remaining';
+          // decrement 'timeLimit' by 1
+          timeLimit--;
+      }
+      else if (timeLimit === 1) {
+          // dispaly timer and countdown
+          questionHeaderEl.textContent = timeLimit + ' second remaining';
+          // decrement 'timeLimit' by 1
+          timeLimit--;
+      }
+      else {
+          // clear question items
+          questionHeaderEl.textContent = '';
+          // showQuestionEl.textContent = '';
+          try {
+              $('guestion-ctn').empty();
+          }
+          catch(err) {
+
+          }
+          
+          // clear timer
+          clearInterval(timeInterval);
+
+          // run endGame function
+          $("#question").empty();
+          $("#questionBtns").empty();
+          $("#gif-ctn").remove();
+          endGame();
+      }
+  }, 1000)
+}
 
 // check if token exists in local storage
 var getToken = function () {
-  var token = localStorage.getItem("token");
+  token = localStorage.getItem("token");
   if (!token) {
     generateToken();
   }
@@ -36,16 +104,17 @@ var generateToken = function () {
 };
 
 // save token to local storage
-var saveToken = function (token) {
+var saveToken = function () {
   // clear out current value
   localStorage.removeItem("token");
 
   // push token into localstorage
   localStorage.setItem("token", token);
+  token = localStorage.getItem("token");
 };
 
 // function to be used if we get a repsonse from api that tells us we ran out of unique questions, this will reset the token so old questions can be used again
-var resetToken = function (difficulty, type, category, token) {
+var resetToken = function () {
   var apiUrl = "https://opentdb.com/api_token.php?command=reset&token=" + token;
   fetch(apiUrl)
     .then(function (response) {
@@ -65,7 +134,7 @@ var resetToken = function (difficulty, type, category, token) {
 };
 
 // function to get question data based on user selections and to start and display timer
-var getQuestionsData = function (difficulty, type, category, token, name) {
+var getQuestionsData = function () {
   var apiUrl =
     "https://opentdb.com/api.php?amount=10" +
     category +
@@ -95,7 +164,7 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
             return;
           } else {
             // get array of objects to hold the data we need
-            var questions = [];
+            questions = [];
             for (i = 0; i < data.results.length; i++) {
               var questionObj = {
                 question: data.results[i].question,
@@ -112,8 +181,7 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
                   questionObj.answers[i],
                 ];
               }
-              // we will need to increase this when we move on from each question
-              var questionCount = 0;
+              
               //add the object to the array
               questions.push(questionObj);
             }
@@ -122,14 +190,7 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
               const j = Math.floor(Math.random() * (i + 1));
               [questions[i], questions[j]] = [questions[j], questions[i]];
             }
-            displayQuestions(
-              questions,
-              questionCount,
-              120,
-              difficulty,
-              0,
-              name
-            );
+            displayQuestions();
           }
         });
       } else {
@@ -143,35 +204,7 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
 };
 
 // get our questionObj array and put it on the page
-var displayQuestions = function (
-  questions,
-  questionCount,
-  timeLeft,
-  userDifficulty,
-  score,
-  name
-) {
-  // hide start and high score buttons
-  $("#start-btn").hide();
-  $("#high-btn").hide();
-  $("#questions-modal").addClass("is-active is-clipped");
-  countdownTimer();
-  // set where to start the timer
-  // if (timeLeft === 120) {
-  //   // initiate timer
-  //   var timeCounter = setInterval(function () {
-  //     if (timeLeft < 1) {
-  //       clearInterval(timeCounter);
-  //       $("#timer-ctn").empty();
-  //       endGame(name, score, timeCounter);
-  //     }
-  //     $("#timer-ctn").empty();
-  //     var timerDiv = document.createElement("p");
-  //     timerDiv.textContent = "Time Remaing: " + timeLeft + " seconds";
-  //     $("#timer-ctn").append(timerDiv);
-  //     timeLeft--;
-  //   }, 1000);
-  // }
+var displayQuestions = function () {
   // create the question text h2 element give it a class for now and append it to html container(id=question for now)
   var currentQuestion = document.createElement("h2");
   currentQuestion.classList = "current-question";
@@ -192,9 +225,9 @@ var displayQuestions = function (
       if (
         this.getAttribute("data-val") === questions[questionCount].correctAnswer
       ) {
-        if (userDifficulty === "&difficulty=easy") {
+        if (difficulty === "&difficulty=easy") {
           score = score + 3;
-        } else if (userDifficulty === "&difficulty=hard") {
+        } else if (difficulty === "&difficulty=hard") {
           score = score + 10;
         } else {
           score = score + 5;
@@ -222,9 +255,9 @@ var displayQuestions = function (
             alert("Unable to connect to api");
           });
       } else {
-        if (userDifficulty === "&difficulty=easy") {
+        if (difficulty === "&difficulty=easy") {
           score = score - 1;
-        } else if (userDifficulty === "&difficulty=hard") {
+        } else if (difficulty === "&difficulty=hard") {
           score = score - 6;
         } else {
           score = score - 3;
@@ -259,64 +292,111 @@ var displayQuestions = function (
 
       questionCount = questionCount + 1;
       if (questionCount < questions.length) {
-        displayQuestions(
-          questions,
-          questionCount,
-          timeLeft,
-          userDifficulty,
-          score,
-          name
-        );
+        displayQuestions();
       } else {
         $("#question").empty();
         $("#questionBtns").empty();
         $("#gif-ctn").remove();
-        endGame(name, score, timeCounter);
-        return;
+        endGame();
+        // return;
       }
     };
   }
   // append the container to the html container(id=question for now)
   $("#questionBtns").append(currentAnswerSetContainer);
   // append the current score below the question
-  var currentScore = document.createElement("p");
-  currentScore.textContent = name + " has a score of " + score;
-  $("#question").append(currentScore);
+  // var currentScore = document.createElement("p");
+  // $('#score-ctn').textContent = playerName + " has a score of " + score;
+  // $("#question").append(currentScore);
 };
 
 // end the game and display high scores
-var endGame = function (name, score, timeCounter) {
-  // get rid of timer and remove it
-  clearInterval(timeCounter);
-  $("#timer-ctn").empty();
+var endGame = function () {
+  // timeLimit = 0;
+  clearInterval(timeInterval);
+  questionHeaderEl.textContent = 'High Scores'
 
   //set up our score display
-  var newScore = {
-    name: name,
+  var newScoreObj = {
+    name: playerName,
     score: score,
-    combo: name + " - " + score,
+    // combo: name + " - " + score,
   };
 
+  highscoreArray.push(newScoreObj);
+  localStorage.setItem("scores", JSON.stringify(highscoreArray));
+  showHighscore();
+
+  // loadHighscore();
   // pull all scores from localStorage
-  var scores = localStorage.getItem("scores");
-  if (!scores) {
-    scores = [newScore];
-  } else {
-    scores = JSON.parse(scores);
-    scores.push(newScore);
-    scores.sort((a, b) => (a.score > b.score ? 1 : -1));
-  }
+  // var scores = localStorage.getItem("scores");
+  // if (!scores) {
+  //   scores = [newScoreObj];
+  // } else {
+  //   scores = JSON.parse(scores);
+  //   scores.push(newScoreObj);
+  //   scores.sort((a, b) => (a.score > b.score ? 1 : -1));
+  // }
 
-  // store all scores back into localStorage
-  localStorage.setItem("scores", JSON.stringify(scores));
+  // // store all scores back into localStorage
+  // localStorage.setItem("scores", JSON.stringify(scores));
 
-  // display all scores on the page
-  for (i = 0; i < scores.length; i++) {
-    var scoreLi = document.createElement("li");
-    scoreLi.textContent = scores[i].combo;
-    $("#score-ctn").prepend(scoreLi);
-  }
+  // // display all scores on the page
+  // for (i = 0; i < scores.length; i++) {
+  //   var scoreLi = document.createElement("li");
+  //   scoreLi.textContent = scores[i].name + ': ' + scores[i].score;
+  //   $("#score-ctn").prepend(scoreLi);
+  // }
 };
+
+var showHighscore = function() {
+  // get the highscores from localStorage for display
+  // loadHighscore();
+  $("#score-ctn").empty;
+  // show only the showHighscoreWrapper section
+  // startGameWrapper.style.display = 'none';
+  // showHighscoreWrapper.style.display = 'inline';
+  // endGameWrapper.style.display = 'none';
+  // questionWrapper.style.display = 'none';
+
+  // sort the highscoreArray in descending order based on the score
+  highscoreArray = highscoreArray.sort(function(a, b){return b.score - a.score});
+
+  // create list item for the highscoreArray
+  var listContainerEl = document.createElement('ol');
+  listContainerEl.id = 'highscoreListContainer';
+  
+  // for loop to create all the highscores from the highscoreArray into a list
+  for (i = 0; i < highscoreArray.length; i++) {
+      var listItemEl = document.createElement('li');
+      listItemEl.innerHTML = highscoreArray[i].name + ": " + highscoreArray[i].score + "<br>";
+      listContainerEl.appendChild(listItemEl);
+  }
+  console.log(highscoreArray);
+  // add the list of highscores into the listContainerEl
+  $("#score-ctn").prepend(listContainerEl);
+}
+
+var loadHighscore = function() {
+  // set highscoreArray to empty
+  highscoreArray = [];
+
+  // retreve the highscores from localStorage
+  var savedHighscore = localStorage.getItem("scores");
+
+  // check if the savedHighscore is null is so return false to exit the function
+  if (!savedHighscore) {
+      return false;
+  }
+
+  // convert the tasks from a stringify format to array format
+  savedHighscore = JSON.parse(savedHighscore);
+
+  // push savedHighscore into the highscoreArray
+  for (i = 0; i < savedHighscore.length; i++) {
+      highscoreArray.push(savedHighscore[i]);
+  }
+}
 
 // get and fills out category
 var generateCategory = function () {
@@ -344,41 +424,6 @@ var generateCategory = function () {
     });
 };
 
-var countdownTimer = function() {
-  // start of the countdown timer
-  var timeInterval = setInterval(function () {
-      if (timeLimit > 1) {
-          // display timer and countdown
-          countdownEl.textContent = timeLimit + ' seconds remaining';
-          // decrement 'timeLimit' by 1
-          timeLimit--;
-      }
-      else if (timeLimit === 1) {
-          // dispaly timer and countdown
-          countdownEl.textContent = timeLimit + ' second remaining';
-          // decrement 'timeLimit' by 1
-          timeLimit--;
-      }
-      else {
-          // clear question items
-          countdownEl.textContent = '';
-          showQuestionEl.textContent = '';
-          try {
-              document.getElementById('choiceButtonContainer').remove();
-          }
-          catch(err) {
-
-          }
-          
-          // clear timer
-          clearInterval(timeInterval);
-
-          // run endGame function
-          endGame();
-      }
-  }, 1000)
-}
-
 // open start modal
 $("#start-btn").on("click", function () {
   $("#start-modal").addClass("is-active is-clipped");
@@ -402,13 +447,14 @@ $("#start-modal .is-success").on("click", function () {
   if (!$("#playerName").val()) {
     $("#prompt-modal").addClass("is-active is-clipped");
     promptContent.textContent = "Please enter a Player Name!";
-  } else {
-    var difficulty = "";
+  } 
+  else {
+    playerName = $("#playerName").val();
+
     if ($("#difficultySelect").val() != "Any Difficulty") {
       difficulty = "&difficulty=" + $("#difficultySelect").val().toLowerCase();
     }
 
-    var type = "";
     if ($("#typeSelect").val() != "Any Type") {
       if ($("#typeSelect").val() === "Multiple Choice") {
         type = "&type=multiple";
@@ -417,20 +463,15 @@ $("#start-modal .is-success").on("click", function () {
       }
     }
 
-    var category = "";
     if ($("#categorySelect").val() != "Any Category") {
       category =
         "&category=" + $("#categorySelect").find("option:selected").attr("id");
     }
 
-    var token = localStorage.getItem("token");
-
-    var name = $("#playerName").val();
-
     // hide the modal so we can take the quiz
     $("#start-modal").removeClass("is-active is-clipped");
     // run function to start the quiz with the stored user inputs
-    getQuestionsData(difficulty, type, category, token, name);
+    startGame();
   }
 });
 
@@ -461,6 +502,3 @@ $(window).on('resize', function() {
     $('#start-btn, #high-btn').addClass('is-large');
   }
 })
-
-// call function to generate a session token if there is not a token in local storage
-getToken();
