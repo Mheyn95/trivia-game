@@ -14,29 +14,31 @@
   </head>
 
   <body>
-    <section class="hero is-fullheight" id="hero-img">
+    <!-- <section class="hero is-fullheight" id="hero-img"> -->
+    <section class="hero" id="hero-img">
+
       <header id="header">
-        <h1 class="is-size-1-desktop">Mega Trivia</h1>
-        <div class="is-size-1-desktop" id="timer-ctn"></div>
+        <!-- <h1 class="is-size-1-desktop">Mega Trivia</h1> -->
+        <!-- <div class="is-size-1-desktop" id="timer-ctn"></div> -->
       </header>
       <div class="btn-ctn">
-        <button class="button is-success is-small" id="start-btn">
+        <button class="button is-success m-3" id="start-btn">
           START!
         </button>
-        <button class="button is-danger is-small" id="high-btn">
+        <button class="button is-danger my-3" id="high-btn">
           High Score
         </button>
       </div>
     </section>
 
-    <div id="containers">
+    <!-- <div id="containers">
       <div id="quiz-ctn"></div>
       <div id="modal-ctn"></div>
       <div id="score-ctn"></div>
       <div id="gif-ctn"></div>
     </div>
 
-    <div id="question"></div>
+    <div id="question"></div> -->
 
     <!-- Start Game Modal -->
     <div class="modal" id="start-modal">
@@ -83,6 +85,71 @@
               </div>
             </div>
           </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success">Start Game</button>
+          <button class="button close">Cancel</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Questions Modal -->
+    <div class="modal" id="questions-modal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title" id="timer-ctn"></p>
+          <button class="delete close" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field" id="containers">
+            <label class="label" id="question"></label>
+            <div class="control" id="questionBtns">
+
+            </div>
+            <div id="quiz-ctn"></div>
+            <div id="modal-ctn"></div>
+            <div id="score-ctn"></div>
+            <div id="gif-ctn"></div>
+          </div>
+      
+          <!-- <div id="question"></div> -->
+          <!-- Content ... -->
+          <!-- <div class="field">
+            <label class="label">Player Name</label>
+            <div class="control">
+              <input class="input" id="playerName" type="text" placeholder="Enter Name" />
+            </div>
+            <label class="label">Select Category:</label>
+            <div class="control">
+              <div class="select">
+                <select id="categorySelect">
+                  <option>Any Category</option>
+                </select>
+              </div>
+            </div>
+            <label class="label">Select Difficulty:</label>
+            <div class="control">
+              <div class="select">
+                <select id="difficultySelect">
+                  <option id="anyDiff">Any Difficulty</option>
+                  <option id="easy">Easy</option>
+                  <option id="medium">Medium</option>
+                  <option id="hard">Hard</option>
+                </select>
+              </div>
+            </div>
+            <label class="label">Select Type:</label>
+            <div class="control">
+              <div class="select">
+                <select id="typeSelect">
+                  <option id="anyType">Any Type</option>
+                  <option id="multi">Multiple Choice</option>
+                  <option id="boolean">True / False</option>
+                </select>
+              </div>
+            </div>
+          </div> -->
         </section>
         <footer class="modal-card-foot">
           <button class="button is-success">Start Game</button>

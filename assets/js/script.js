@@ -1,6 +1,20 @@
 // get promptContent <p> to display prompts to the user
 var promptContent = document.getElementById("promptContent");
 
+// get countdown <p>
+var countdownEl = document.getElementById('timer-ctn');
+
+// set timeLimit
+var timeLimit = 120;
+
+// check if token exists in local storage
+var getToken = function () {
+  var token = localStorage.getItem("token");
+  if (!token) {
+    generateToken();
+  }
+};
+
 // generate session token to make sure the same questions will not be reused, unless they run out
 var generateToken = function () {
   var apiUrl = "https://opentdb.com/api_token.php?command=request";
@@ -30,14 +44,6 @@ var saveToken = function (token) {
   localStorage.setItem("token", token);
 };
 
-// check if token exists in local storage
-var getToken = function () {
-  var token = localStorage.getItem("token");
-  if (!token) {
-    generateToken();
-  }
-};
-
 // function to be used if we get a repsonse from api that tells us we ran out of unique questions, this will reset the token so old questions can be used again
 var resetToken = function (difficulty, type, category, token) {
   var apiUrl = "https://opentdb.com/api_token.php?command=reset&token=" + token;
@@ -61,7 +67,7 @@ var resetToken = function (difficulty, type, category, token) {
 // function to get question data based on user selections and to start and display timer
 var getQuestionsData = function (difficulty, type, category, token, name) {
   var apiUrl =
-    "https://opentdb.com/api.php?amount=1" +
+    "https://opentdb.com/api.php?amount=10" +
     category +
     difficulty +
     type +
@@ -148,22 +154,24 @@ var displayQuestions = function (
   // hide start and high score buttons
   $("#start-btn").hide();
   $("#high-btn").hide();
+  $("#questions-modal").addClass("is-active is-clipped");
+  countdownTimer();
   // set where to start the timer
-  if (timeLeft === 120) {
-    // initiate timer
-    var timeCounter = setInterval(function () {
-      if (timeLeft < 1) {
-        clearInterval(timeCounter);
-        $("#timer-ctn").empty();
-        endGame(name, score, timeCounter);
-      }
-      $("#timer-ctn").empty();
-      var timerDiv = document.createElement("p");
-      timerDiv.textContent = "Time Remaing: " + timeLeft + " seconds";
-      $("#timer-ctn").append(timerDiv);
-      timeLeft--;
-    }, 1000);
-  }
+  // if (timeLeft === 120) {
+  //   // initiate timer
+  //   var timeCounter = setInterval(function () {
+  //     if (timeLeft < 1) {
+  //       clearInterval(timeCounter);
+  //       $("#timer-ctn").empty();
+  //       endGame(name, score, timeCounter);
+  //     }
+  //     $("#timer-ctn").empty();
+  //     var timerDiv = document.createElement("p");
+  //     timerDiv.textContent = "Time Remaing: " + timeLeft + " seconds";
+  //     $("#timer-ctn").append(timerDiv);
+  //     timeLeft--;
+  //   }, 1000);
+  // }
   // create the question text h2 element give it a class for now and append it to html container(id=question for now)
   var currentQuestion = document.createElement("h2");
   currentQuestion.classList = "current-question";
@@ -246,6 +254,7 @@ var displayQuestions = function (
           });
       }
       $("#question").empty();
+      $("#questionBtns").empty();
       $("#gif-ctn").empty();
 
       questionCount = questionCount + 1;
@@ -260,6 +269,7 @@ var displayQuestions = function (
         );
       } else {
         $("#question").empty();
+        $("#questionBtns").empty();
         $("#gif-ctn").remove();
         endGame(name, score, timeCounter);
         return;
@@ -267,7 +277,7 @@ var displayQuestions = function (
     };
   }
   // append the container to the html container(id=question for now)
-  $("#question").append(currentAnswerSetContainer);
+  $("#questionBtns").append(currentAnswerSetContainer);
   // append the current score below the question
   var currentScore = document.createElement("p");
   currentScore.textContent = name + " has a score of " + score;
@@ -307,6 +317,7 @@ var endGame = function (name, score, timeCounter) {
     $("#score-ctn").prepend(scoreLi);
   }
 };
+
 // get and fills out category
 var generateCategory = function () {
   var categoryUrl = "https://opentdb.com/api_category.php";
@@ -332,6 +343,41 @@ var generateCategory = function () {
       alert("Unable to connect to Trivia API");
     });
 };
+
+var countdownTimer = function() {
+  // start of the countdown timer
+  var timeInterval = setInterval(function () {
+      if (timeLimit > 1) {
+          // display timer and countdown
+          countdownEl.textContent = timeLimit + ' seconds remaining';
+          // decrement 'timeLimit' by 1
+          timeLimit--;
+      }
+      else if (timeLimit === 1) {
+          // dispaly timer and countdown
+          countdownEl.textContent = timeLimit + ' second remaining';
+          // decrement 'timeLimit' by 1
+          timeLimit--;
+      }
+      else {
+          // clear question items
+          countdownEl.textContent = '';
+          showQuestionEl.textContent = '';
+          try {
+              document.getElementById('choiceButtonContainer').remove();
+          }
+          catch(err) {
+
+          }
+          
+          // clear timer
+          clearInterval(timeInterval);
+
+          // run endGame function
+          endGame();
+      }
+  }, 1000)
+}
 
 // open start modal
 $("#start-btn").on("click", function () {
@@ -387,6 +433,34 @@ $("#start-modal .is-success").on("click", function () {
     getQuestionsData(difficulty, type, category, token, name);
   }
 });
+
+$(window).on('resize', function() {
+  if($(window).width() <= 575 ) {
+    $('#start-btn, #high-btn').removeClass('is-normal');
+    $('#start-btn, #high-btn').removeClass('is-medium');
+    $('#start-btn, #high-btn').removeClass('is-large');
+    $('#start-btn, #high-btn').addClass('is-small');
+  }
+  else if($(window).width() > 575 && $(window).width() <= 768) {
+    $('#start-btn, #high-btn').removeClass('is-small');
+    $('#start-btn, #high-btn').removeClass('is-medium');
+    $('#start-btn, #high-btn').removeClass('is-large');
+    $('#start-btn, #high-btn').addClass('is-normal');
+  }
+  else if($(window).width() > 768 && $(window).width() <= 980) {
+    $('#start-btn, #high-btn').removeClass('is-small');
+    $('#start-btn, #high-btn').removeClass('is-normal');
+    $('#start-btn, #high-btn').removeClass('is-large');
+    $('#start-btn, #high-btn').addClass('is-medium');
+  }
+  else {
+    $('#start-btn, #high-btn').removeClass('is-small');
+    $('#start-btn, #high-btn').removeClass('is-medium');
+    $('#start-btn, #high-btn').removeClass('is-normal');
+    $('#start-btn, #high-btn').removeClass('is-normal');
+    $('#start-btn, #high-btn').addClass('is-large');
+  }
+})
 
 // call function to generate a session token if there is not a token in local storage
 getToken();

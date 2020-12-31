@@ -1,6 +1,10 @@
+body, html {
+    height: 100%;
+}
+
 #header {
     color: rgb(31, 165, 206);
-    font-size: ;
+    /* font-size: ; */
 }
 
 #timer-ctn {
@@ -8,10 +12,24 @@
 }
 
 #hero-img {
-    background-image: url("../images/trivia.jpg");
+    background-image: url("../images/trivia-night.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     height: 100%;
     width: auto;
+}
+
+/* MEDIA QUERY FOR SMALLER DESKTOP SCREENS AND SMALLER */
+@media screen and (max-width: 980px) {
+    #hero-img {
+        height: 50%;
+    }
+}
+
+/* MEDIA QUERY FOR SMALLER DESKTOP SCREENS AND SMALLER */
+@media screen and (max-width: 768px) {
+    #hero-img {
+        height: 30%;
+    }
 }
