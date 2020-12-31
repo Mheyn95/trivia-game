@@ -13,6 +13,7 @@
     background-size: cover;
 }
 
-.current-question {
-    justify-content: center;
+#body {
+    background-color: #FA8BFF;
+    background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);
 }
