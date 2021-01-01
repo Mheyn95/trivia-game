@@ -289,12 +289,16 @@ var endGame = function (name, score, timeCounter) {
 
   // pull all scores from localStorage
   var scores = localStorage.getItem("scores");
-  if (!scores) {
-    scores = [newScore];
-  } else {
-    scores = JSON.parse(scores);
-    scores.push(newScore);
-    scores.sort((a, b) => (a.score > b.score ? 1 : -1));
+  // check if there is a name, do not store if there is not a name (if user refreshes during the quiz)
+  if (newScore.name) {
+    // check if there is any stored scores, if there is push new score, if there is not the new score becomes the first entry
+    if (!scores) {
+      scores = [newScore];
+    } else {
+      scores = JSON.parse(scores);
+      scores.push(newScore);
+      scores.sort((a, b) => (a.score > b.score ? 1 : -1));
+    }
   }
 
   // store all scores back into localStorage
