@@ -1,6 +1,8 @@
 // get promptContent <p> to display prompts to the user
 var promptContent = document.getElementById("promptContent");
 
+var timeLeft = 120;
+
 // generate session token to make sure the same questions will not be reused, unless they run out
 var generateToken = function () {
   var apiUrl = "https://opentdb.com/api_token.php?command=request";
@@ -116,14 +118,8 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
               const j = Math.floor(Math.random() * (i + 1));
               [questions[i], questions[j]] = [questions[j], questions[i]];
             }
-            displayQuestions(
-              questions,
-              questionCount,
-              120,
-              difficulty,
-              0,
-              name
-            );
+
+            displayQuestions(questions, questionCount, difficulty, 0, name);
           }
         });
       } else {
@@ -140,7 +136,6 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
 var displayQuestions = function (
   questions,
   questionCount,
-  timeLeft,
   userDifficulty,
   score,
   name
@@ -151,11 +146,11 @@ var displayQuestions = function (
   // set where to start the timer
   if (timeLeft === 120) {
     // initiate timer
-    var timeCounter = setInterval(function () {
+    window.timeCounter = setInterval(function () {
       if (timeLeft < 1) {
         clearInterval(timeCounter);
         $("#timer-ctn").empty();
-        endGame(name, score, timeCounter);
+        endGame(name, score);
       }
       $("#timer-ctn").empty();
       var timerDiv = document.createElement("p");
@@ -250,18 +245,11 @@ var displayQuestions = function (
 
       questionCount = questionCount + 1;
       if (questionCount < questions.length) {
-        displayQuestions(
-          questions,
-          questionCount,
-          timeLeft,
-          userDifficulty,
-          score,
-          name
-        );
+        displayQuestions(questions, questionCount, userDifficulty, score, name);
       } else {
         $("#question").empty();
         $("#gif-ctn").remove();
-        endGame(name, score, timeCounter);
+        endGame(name, score);
         return;
       }
     };
@@ -275,16 +263,18 @@ var displayQuestions = function (
 };
 
 // end the game and display high scores
-var endGame = function (name, score, timeCounter) {
+var endGame = function (name, score) {
   // get rid of timer and remove it
+  console.log(timeLeft);
   clearInterval(timeCounter);
+  console.log(timeLeft);
   $("#timer-ctn").empty();
 
   //set up our score display
   var newScore = {
     name: name,
     score: score,
-    combo: name + " - " + score,
+    combo: name + ": " + score,
   };
 
   // pull all scores from localStorage
