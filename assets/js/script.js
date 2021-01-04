@@ -193,7 +193,7 @@ var displayQuestions = function (
         }
         console.log(score);
         var apiUrl =
-          "https://api.giphy.com/v1/gifs/111ebonMs90YLu?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
+          "https://api.giphy.com/v1/gifs/random?tag=thumbsup&rating=g&api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
         fetch(apiUrl)
           .then(function (response) {
             // request was successful
@@ -224,7 +224,7 @@ var displayQuestions = function (
         console.log(score);
         //get thumbs down gif
         apiUrl =
-          "https://api.giphy.com/v1/gifs/qiDb8McXyj6Eg?api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
+          "https://api.giphy.com/v1/gifs/random?tag=thumbsdown&rating=g&api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
         fetch(apiUrl)
           .then(function (response) {
             // request was successful
