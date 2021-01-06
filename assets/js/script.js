@@ -301,6 +301,7 @@ var endGame = function (name, score) {
     $("#score-ctn").prepend(scoreLi);
   }
   $("#reload-btn").removeClass("is-hidden");
+  $("#clear-btn").removeClass("is-hidden");
 };
 // get and fills out category
 var generateCategory = function () {
@@ -361,6 +362,7 @@ $("#high-btn").on("click", function () {
   }
 
   $("#reload-btn").removeClass("is-hidden");
+  $("#clear-btn").removeClass("is-hidden");
 });
 
 //close start modal
@@ -423,6 +425,12 @@ $("#start-modal .is-success").on("click", function () {
 });
 
 // reload page to attempt quiz again
+$("#clear-btn").on("click", function () {
+  $("#score-ctn").empty();
+  localStorage.removeItem("scores");
+});
+
+// clear local storage and page of scores
 $("#reload-btn").on("click", function () {
   $("#reload-btn").addClass("is-hidden");
   location.reload();
