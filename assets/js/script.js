@@ -1,7 +1,7 @@
 // get promptContent <p> to display prompts to the user
 var promptContent = document.getElementById("promptContent");
 
-var timeLeft = 120;
+var timeLeft = 10;
 
 // generate session token to make sure the same questions will not be reused, unless they run out
 var generateToken = function () {
@@ -142,7 +142,7 @@ var displayQuestions = function (
 ) {
   window.timeoutScore = score;
   // set where to start the timer
-  if (timeLeft === 120) {
+  if (timeLeft === 10) {
     // initiate timer
     window.timeCounter = setInterval(function () {
       if (timeLeft < 1) {
@@ -267,7 +267,6 @@ var displayQuestions = function (
 // end the game and display high scores
 var endGame = function (name, score) {
   // get rid of timer and remove it
-  console.log(score);
   clearInterval(timeCounter);
   $("#quiz-ctn").empty();
 
@@ -301,6 +300,7 @@ var endGame = function (name, score) {
     scoreLi.textContent = scores[i].combo;
     $("#score-ctn").prepend(scoreLi);
   }
+  $("#reload-btn").removeClass("is-hidden");
 };
 // get and fills out category
 var generateCategory = function () {
@@ -391,6 +391,11 @@ $("#start-modal .is-success").on("click", function () {
     // run function to start the quiz with the stored user inputs
     getQuestionsData(difficulty, type, category, token, name);
   }
+});
+
+// reload page to attempt quiz again
+$("#reload-btn").on("click", function () {
+  location.reload();
 });
 
 // call function to generate a session token if there is not a token in local storage

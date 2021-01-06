@@ -23,11 +23,17 @@
           START!
         </button>
         <button class="button is-danger is-medium my-2" id="high-btn">
-          High Score
+          High Scores
+        </button>
+        <button
+          class="button is-warning is-hidden is-medium my-2 mx-2"
+          id="reload-btn"
+        >
+          Try Again?
         </button>
       </div>
     </section>
-          
+
     <div id="quiz-ctn">
       <div id="question"></div>
       <!-- <div id="quiz-ctn"></div> -->
@@ -51,7 +57,12 @@
           <div class="field">
             <label class="label">Player Name</label>
             <div class="control">
-              <input class="input" id="playerName" type="text" placeholder="Enter Name" />
+              <input
+                class="input"
+                id="playerName"
+                type="text"
+                placeholder="Enter Name"
+              />
             </div>
             <label class="label">Select Category:</label>
             <div class="control">
@@ -99,7 +110,10 @@
           <article class="media">
             <div class="media-content">
               <div class="media-left">
-                <button class="delete close is-pulled-right" aria-label="close"></button>
+                <button
+                  class="delete close is-pulled-right"
+                  aria-label="close"
+                ></button>
               </div>
               <div class="content">
                 <p id="promptContent"></p>
