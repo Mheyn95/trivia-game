@@ -140,6 +140,7 @@ var displayQuestions = function (
   score,
   name
 ) {
+  window.timeoutScore = score;
   // set where to start the timer
   if (timeLeft === 120) {
     // initiate timer
@@ -147,7 +148,7 @@ var displayQuestions = function (
       if (timeLeft < 1) {
         clearInterval(timeCounter);
         $("#timer-ctn").empty();
-        endGame(name, score);
+        endGame(name, timeoutScore);
       }
       $("#timer-ctn").empty();
       var timerDiv = document.createElement("p");
@@ -158,12 +159,14 @@ var displayQuestions = function (
   }
   // create the question text h2 element give it a class for now and append it to html container(id=question for now)
   var currentQuestion = document.createElement("h2");
-  currentQuestion.classList = "current-question is-flex is-justify-content-center has-text-weight-semibold my-2";
+  currentQuestion.classList =
+    "current-question is-flex is-justify-content-center has-text-weight-semibold my-2";
   currentQuestion.innerHTML = questions[questionCount].question;
   $("#question").append(currentQuestion);
   // create div to hold answers, give it a class for now
   var currentAnswerSetContainer = document.createElement("div");
-  currentAnswerSetContainer.classList = "current-answer-container is-flex is-justify-content-center my-2";
+  currentAnswerSetContainer.classList =
+    "current-answer-container is-flex is-justify-content-center my-2";
   // create answer btns and append them to the container, give each one a class for now
   for (i = 0; i < questions[questionCount].answers.length; i++) {
     var currentAnswer = document.createElement("button");
@@ -255,7 +258,8 @@ var displayQuestions = function (
   $("#question").append(currentAnswerSetContainer);
   // append the current score below the question
   var currentScore = document.createElement("p");
-  currentScore.classList = "is-flex is-justify-content-center has-text-weight-semibold my-2";
+  currentScore.classList =
+    "is-flex is-justify-content-center has-text-weight-semibold my-2";
   currentScore.textContent = name + " has a score of " + score;
   $("#question").append(currentScore);
 };
@@ -263,9 +267,8 @@ var displayQuestions = function (
 // end the game and display high scores
 var endGame = function (name, score) {
   // get rid of timer and remove it
-  console.log(timeLeft);
+  console.log(score);
   clearInterval(timeCounter);
-  console.log(timeLeft);
   $("#quiz-ctn").empty();
 
   //set up our score display
@@ -381,9 +384,9 @@ $("#start-modal .is-success").on("click", function () {
     $("#high-btn").hide();
 
     // update header section
-    $('#heroSection').removeClass('is-fullheight hero-img');
-    $('#heroSection').addClass('header-img');
-    $('#header').removeClass('is-hidden');
+    $("#heroSection").removeClass("is-fullheight hero-img");
+    $("#heroSection").addClass("header-img");
+    $("#header").removeClass("is-hidden");
 
     // run function to start the quiz with the stored user inputs
     getQuestionsData(difficulty, type, category, token, name);
