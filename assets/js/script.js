@@ -140,9 +140,6 @@ var displayQuestions = function (
   score,
   name
 ) {
-  // hide start and high score buttons
-  $("#start-btn").hide();
-  $("#high-btn").hide();
   // set where to start the timer
   if (timeLeft === 120) {
     // initiate timer
@@ -247,8 +244,8 @@ var displayQuestions = function (
       if (questionCount < questions.length) {
         displayQuestions(questions, questionCount, userDifficulty, score, name);
       } else {
-        $("#question").empty();
-        $("#gif-ctn").remove();
+        // $("#question").empty();
+        // $("#gif-ctn").empty();
         endGame(name, score);
         return;
       }
@@ -269,7 +266,7 @@ var endGame = function (name, score) {
   console.log(timeLeft);
   clearInterval(timeCounter);
   console.log(timeLeft);
-  $("#timer-ctn").empty();
+  $("#quiz-ctn").empty();
 
   //set up our score display
   var newScore = {
@@ -378,6 +375,16 @@ $("#start-modal .is-success").on("click", function () {
 
     // hide the modal so we can take the quiz
     $("#start-modal").removeClass("is-active is-clipped");
+
+    // hide start and high score buttons
+    $("#start-btn").hide();
+    $("#high-btn").hide();
+
+    // update header section
+    $('#heroSection').removeClass('is-fullheight hero-img');
+    $('#heroSection').addClass('header-img');
+    $('#header').removeClass('is-hidden');
+
     // run function to start the quiz with the stored user inputs
     getQuestionsData(difficulty, type, category, token, name);
   }

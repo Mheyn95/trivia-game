@@ -10,13 +10,13 @@
     />
     <!-- local css framework -->
     <link rel="stylesheet" href="assets/css/style.css" />
-    <title>Mega Trivia</title>
+    <title>Trivia Night</title>
   </head>
 
   <body id="body">
-    <section class="hero is-fullheight" id="hero-img">
-      <header id="header">
-        <h1 class="is-size-1-desktop">Mega Trivia</h1>
+    <section class="hero is-fullheight hero-img" id="heroSection">
+      <header>
+        <h1 class="is-size-1-desktop is-hidden" id="header">Trivia Night</h1>
       </header>
       <div class="btn-ctn">
         <button class="button is-success is-medium my-2 mx-2" id="start-btn">
@@ -27,18 +27,16 @@
         </button>
       </div>
     </section>
-      
-      <div id="question">
-      </div>
-      
-      <div id="containers">
-        <div id="quiz-ctn"></div>
-        <div id="modal-ctn"></div>
-        <div id="score-ctn"></div>
-        <div class="is-size-4 has-text-centered" id="timer-ctn"></div>
-        <div class="is-flex is-justify-content-center" id="gif-ctn"></div>
-      </div>
+          
+    <div id="quiz-ctn">
+      <div id="question"></div>
+      <!-- <div id="quiz-ctn"></div> -->
+      <!-- <div id="modal-ctn"></div> -->
+      <div class="is-size-4 has-text-centered" id="timer-ctn"></div>
+      <div class="is-flex is-justify-content-center" id="gif-ctn"></div>
+    </div>
 
+    <div id="score-ctn"></div>
 
     <!-- Start Game Modal -->
     <div class="modal" id="start-modal">
