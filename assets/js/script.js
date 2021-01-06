@@ -334,6 +334,35 @@ $("#start-btn").on("click", function () {
   generateCategory();
 });
 
+// open high score page
+$("#high-btn").on("click", function () {
+  // empty current page
+  $("#score-ctn").empty();
+  // pull all scores from localStorage
+  var scores = localStorage.getItem("scores");
+  // hide start and high score buttons
+  $("#start-btn").hide();
+  $("#high-btn").hide();
+
+  // update header section
+  $("#heroSection").removeClass("is-fullheight hero-img");
+  $("#heroSection").addClass("header-img");
+  $("#header").removeClass("is-hidden");
+
+  // check if there is any stored scores, if there is display them, if there is not show an empty page with a try again button
+  if (scores) {
+    scores = JSON.parse(scores);
+    // display all scores on the page
+    for (i = 0; i < scores.length; i++) {
+      var scoreLi = document.createElement("li");
+      scoreLi.textContent = scores[i].combo;
+      $("#score-ctn").prepend(scoreLi);
+    }
+  }
+
+  $("#reload-btn").removeClass("is-hidden");
+});
+
 //close start modal
 $("#start-modal .close").on("click", function () {
   $("#start-modal").removeClass("is-active is-clipped");
@@ -395,6 +424,7 @@ $("#start-modal .is-success").on("click", function () {
 
 // reload page to attempt quiz again
 $("#reload-btn").on("click", function () {
+  $("#reload-btn").addClass("is-hidden");
   location.reload();
 });
 
