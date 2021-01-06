@@ -1,7 +1,7 @@
 // get promptContent <p> to display prompts to the user
 var promptContent = document.getElementById("promptContent");
 
-var timeLeft = 10;
+var timeLeft = 120;
 
 // generate session token to make sure the same questions will not be reused, unless they run out
 var generateToken = function () {
@@ -142,7 +142,7 @@ var displayQuestions = function (
 ) {
   window.timeoutScore = score;
   // set where to start the timer
-  if (timeLeft === 10) {
+  if (timeLeft === 120) {
     // initiate timer
     window.timeCounter = setInterval(function () {
       if (timeLeft < 1) {
