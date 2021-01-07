@@ -16,7 +16,7 @@
   <body id="body">
     <section class="hero is-fullheight hero-img" id="heroSection">
       <header>
-        <h1 class="is-size-1-desktop is-hidden" id="header">Trivia Night</h1>
+        <h1 class="is-hidden my-4" id="header">Trivia Night</h1>
       </header>
       <div class="btn-ctn">
         <button class="button is-success is-medium my-2 mx-2" id="start-btn">
@@ -25,10 +25,7 @@
         <button class="button is-danger is-medium my-2" id="high-btn">
           High Scores
         </button>
-        <button
-          class="button is-warning is-hidden is-medium my-2 mx-2"
-          id="reload-btn"
-        >
+        <button class="button is-warning is-hidden is-medium my-2 mx-2" id="reload-btn">
           Try Again?
         </button>
       </div>
@@ -36,13 +33,11 @@
 
     <div id="quiz-ctn">
       <div id="question"></div>
-      <!-- <div id="quiz-ctn"></div> -->
-      <!-- <div id="modal-ctn"></div> -->
       <div class="is-size-4 has-text-centered" id="timer-ctn"></div>
       <div class="is-flex is-justify-content-center" id="gif-ctn"></div>
     </div>
 
-    <div id="score-ctn"></div>
+    <div class="has-text-centered" id="score-ctn"></div>
 
     <!-- Start Game Modal -->
     <div class="modal" id="start-modal">

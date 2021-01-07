@@ -1,7 +1,7 @@
 // get promptContent <p> to display prompts to the user
 var promptContent = document.getElementById("promptContent");
 
-var timeLeft = 10;
+var timeLeft = 120;
 
 // generate session token to make sure the same questions will not be reused, unless they run out
 var generateToken = function () {
@@ -142,7 +142,7 @@ var displayQuestions = function (
 ) {
   window.timeoutScore = score;
   // set where to start the timer
-  if (timeLeft === 10) {
+  if (timeLeft === 120) {
     // initiate timer
     window.timeCounter = setInterval(function () {
       if (timeLeft < 1) {
@@ -160,13 +160,13 @@ var displayQuestions = function (
   // create the question text h2 element give it a class for now and append it to html container(id=question for now)
   var currentQuestion = document.createElement("h2");
   currentQuestion.classList =
-    "current-question is-flex is-justify-content-center has-text-weight-semibold my-2";
+    "current-question is-flex is-justify-content-center has-text-weight-semibold m-3 p-3";
   currentQuestion.innerHTML = questions[questionCount].question;
   $("#question").append(currentQuestion);
   // create div to hold answers, give it a class for now
   var currentAnswerSetContainer = document.createElement("div");
   currentAnswerSetContainer.classList =
-    "current-answer-container is-flex is-justify-content-center my-2";
+    "current-answer-container has-text-centered is-justify-content-center m-3";
   // create answer btns and append them to the container, give each one a class for now
   for (i = 0; i < questions[questionCount].answers.length; i++) {
     var currentAnswer = document.createElement("button");
@@ -387,7 +387,7 @@ $("#start-modal .is-success").on("click", function () {
     $("#heroSection").removeClass("is-fullheight hero-img");
     $("#heroSection").addClass("header-img");
     $("#header").removeClass("is-hidden");
-
+    
     // run function to start the quiz with the stored user inputs
     getQuestionsData(difficulty, type, category, token, name);
   }
