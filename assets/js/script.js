@@ -166,7 +166,7 @@ var displayQuestions = function (
   // create div to hold answers, give it a class for now
   var currentAnswerSetContainer = document.createElement("div");
   currentAnswerSetContainer.classList =
-    "current-answer-container is-flex is-justify-content-center my-2";
+    "current-answer-container buttons is-flex is-justify-content-center my-2";
   // create answer btns and append them to the container, give each one a class for now
   for (i = 0; i < questions[questionCount].answers.length; i++) {
     var currentAnswer = document.createElement("button");
