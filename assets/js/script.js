@@ -14,11 +14,13 @@ var generateToken = function () {
           saveToken(data.token);
         });
       } else {
+        $("#prompt-modal").addClass("is-active is-clipped");
         promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
+      $("#prompt-modal").addClass("is-active is-clipped");
       promptContent.textContent = "Unable to connect to api";
     });
 };
@@ -51,11 +53,13 @@ var resetToken = function (difficulty, type, category, token) {
           getQuestionsData(difficulty, type, category, token);
         });
       } else {
+        $("#prompt-modal").addClass("is-active is-clipped");
         promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
+      $("#prompt-modal").addClass("is-active is-clipped");
       promptContent.textContent = "Unable to connect to api";
     });
 };
@@ -75,19 +79,31 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
       // request was successful
       if (response.ok) {
         response.json().then(function (data) {
+          console.log(data);
           // check if we need to reset token
-          if (data.response_code === 4) {
-            resetToken(difficulty, type, category, token);
+          if (
+            data.response_code === 1 ||
+            (data.response_code === 4 && data.results.length === 0)
+          ) {
+            console.log("test");
+            $("#prompt-modal").addClass("is-active is-clipped");
+            promptContent.textContent =
+              "Sorry, not enough questions, please change your selections!";
+            $("#start-modal").addClass("is-active is-clipped");
+            generateCategory();
+          } else if (data.response_code === 4) {
+            resetToken(
+              difficulty,
+              type,
+              category,
+              localStorage.getItem("token")
+            );
             // check to see if the session token is valid, if it is not generate a new one and run function again
           } else if (data.response_code === 3) {
             generateToken();
             var token = localStorage.getItem("token");
             getQuestionsData(difficulty, type, category, token);
             // check if there are enough questions for the current request
-          } else if (data.response_code === 1) {
-            promptContent.textContent =
-              "Sorry, not enough questions, please change your selections!";
-            return;
           } else {
             // get array of objects to hold the data we need
             var questions = [];
@@ -122,11 +138,13 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
           }
         });
       } else {
+        $("#prompt-modal").addClass("is-active is-clipped");
         promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
+      $("#prompt-modal").addClass("is-active is-clipped");
       promptContent.textContent = "Unable to connect to api";
     });
 };
@@ -199,11 +217,13 @@ var displayQuestions = function (
                 $("#gif-ctn").append(gifImgEl);
               });
             } else {
+              $("#prompt-modal").addClass("is-active is-clipped");
               promptContent.textContent = "Error: " + response.statusText;
               return;
             }
           })
           .catch(function (error) {
+            $("#prompt-modal").addClass("is-active is-clipped");
             promptContent.textContent = "Unable to connect to api";
           });
       } else {
@@ -229,11 +249,13 @@ var displayQuestions = function (
                 $("#gif-ctn").append(gifImgEl);
               });
             } else {
+              $("#prompt-modal").addClass("is-active is-clipped");
               promptContent.textContent = "Error: " + response.statusText;
               return;
             }
           })
           .catch(function (error) {
+            $("#prompt-modal").addClass("is-active is-clipped");
             promptContent.textContent = "Unable to connect to api";
           });
       }
@@ -309,6 +331,7 @@ var generateCategory = function () {
       if (categoryResponse.ok) {
         return categoryResponse.json();
       } else {
+        $("#prompt-modal").addClass("is-active is-clipped");
         promptContent.textContent = "Error: " + categoryResponse.statusText;
       }
     })
@@ -322,6 +345,7 @@ var generateCategory = function () {
       }
     })
     .catch(function (error) {
+      $("#prompt-modal").addClass("is-active is-clipped");
       promptContent.textContent = "Unable to connect to Trivia API";
     });
 };
@@ -370,6 +394,7 @@ $("#start-modal .close").on("click", function () {
 // close prompt modal
 $("#prompt-modal .close").on("click", function () {
   $("#prompt-modal").removeClass("is-active is-clipped");
+
   promptContent.textContent = "";
 });
 
