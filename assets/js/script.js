@@ -14,12 +14,12 @@ var generateToken = function () {
           saveToken(data.token);
         });
       } else {
-        alert("Error: " + response.statusText);
+        promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to api");
+      promptContent.textContent = "Unable to connect to api";
     });
 };
 
@@ -51,12 +51,12 @@ var resetToken = function (difficulty, type, category, token) {
           getQuestionsData(difficulty, type, category, token);
         });
       } else {
-        alert("Error: " + response.statusText);
+        promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to api");
+      promptContent.textContent = "Unable to connect to api";
     });
 };
 
@@ -85,9 +85,8 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
             getQuestionsData(difficulty, type, category, token);
             // check if there are enough questions for the current request
           } else if (data.response_code === 1) {
-            alert(
-              "Sorry, not enough questions, please change your selections!"
-            );
+            promptContent.textContent =
+              "Sorry, not enough questions, please change your selections!";
             return;
           } else {
             // get array of objects to hold the data we need
@@ -123,12 +122,12 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
           }
         });
       } else {
-        alert("Error: " + response.statusText);
+        promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to api");
+      promptContent.textContent = "Unable to connect to api";
     });
 };
 
@@ -186,7 +185,6 @@ var displayQuestions = function (
         } else {
           score = score + 5;
         }
-        console.log(score);
         var apiUrl =
           "https://api.giphy.com/v1/gifs/random?tag=thumbsup&rating=g&api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
         fetch(apiUrl)
@@ -201,12 +199,12 @@ var displayQuestions = function (
                 $("#gif-ctn").append(gifImgEl);
               });
             } else {
-              alert("Error: " + response.statusText);
+              promptContent.textContent = "Error: " + response.statusText;
               return;
             }
           })
           .catch(function (error) {
-            alert("Unable to connect to api");
+            promptContent.textContent = "Unable to connect to api";
           });
       } else {
         if (userDifficulty === "&difficulty=easy") {
@@ -216,7 +214,6 @@ var displayQuestions = function (
         } else {
           score = score - 3;
         }
-        console.log(score);
         //get thumbs down gif
         apiUrl =
           "https://api.giphy.com/v1/gifs/random?tag=thumbsdown&rating=g&api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
@@ -232,12 +229,12 @@ var displayQuestions = function (
                 $("#gif-ctn").append(gifImgEl);
               });
             } else {
-              alert("Error: " + response.statusText);
+              promptContent.textContent = "Error: " + response.statusText;
               return;
             }
           })
           .catch(function (error) {
-            alert("Unable to connect to api");
+            promptContent.textContent = "Unable to connect to api";
           });
       }
       $("#question").empty();
@@ -312,7 +309,7 @@ var generateCategory = function () {
       if (categoryResponse.ok) {
         return categoryResponse.json();
       } else {
-        alert("Error: " + categoryResponse.statusText);
+        promptContent.textContent = "Error: " + categoryResponse.statusText;
       }
     })
     .then(function (categoryResponse) {
@@ -325,7 +322,7 @@ var generateCategory = function () {
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to Trivia API");
+      promptContent.textContent = "Unable to connect to Trivia API";
     });
 };
 
