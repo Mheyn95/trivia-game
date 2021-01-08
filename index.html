@@ -1,14 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <title>Document</title>
-</head>
-<body>
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bulma css framework -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
+    />
+    <!-- local css framework -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <title>Trivia Night</title>
+  </head>
 
+  <body id="body">
+    <section class="hero is-fullheight hero-img" id="heroSection">
+      <header>
+        <h1 class="is-size-1-desktop is-hidden" id="header">Trivia Night</h1>
+      </header>
+      <div class="btn-ctn">
+        <button class="button is-success is-medium my-2 mx-2" id="start-btn">
+          START!
+        </button>
+        <button class="button is-danger is-medium my-2" id="high-btn">
+          High Scores
+        </button>
+        <button
+          class="button is-warning is-hidden is-medium my-2 mx-2"
+          id="reload-btn"
+        >
+          Try Again?
+        </button>
+        <button
+          class="button is-danger is-hidden is-medium my-2 mx-2"
+          id="clear-btn"
+        >
+          Clear High Scores?
+        </button>
+      </div>
+    </section>
+
+    <div id="quiz-ctn">
+      <div id="question"></div>
+      <!-- <div id="quiz-ctn"></div> -->
+      <!-- <div id="modal-ctn"></div> -->
+      <div class="is-size-4 has-text-centered" id="timer-ctn"></div>
+      <div class="is-flex is-justify-content-center" id="gif-ctn"></div>
+    </div>
+
+    <div id="score-ctn"></div>
+
+    <!-- Start Game Modal -->
+    <div class="modal" id="start-modal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Enter Triva Parameters</p>
+          <button class="delete close" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <!-- Content ... -->
+          <div class="field">
+            <label class="label">Player Name</label>
+            <div class="control">
+              <input
+                class="input"
+                id="playerName"
+                type="text"
+                placeholder="Enter Name"
+              />
+            </div>
+            <label class="label">Select Category:</label>
+            <div class="control">
+              <div class="select">
+                <select id="categorySelect">
+                  <option>Any Category</option>
+                </select>
+              </div>
+            </div>
+            <label class="label">Select Difficulty:</label>
+            <div class="control">
+              <div class="select">
+                <select id="difficultySelect">
+                  <option id="anyDiff">Any Difficulty</option>
+                  <option id="easy">Easy</option>
+                  <option id="medium">Medium</option>
+                  <option id="hard">Hard</option>
+                </select>
+              </div>
+            </div>
+            <label class="label">Select Type:</label>
+            <div class="control">
+              <div class="select">
+                <select id="typeSelect">
+                  <option id="anyType">Any Type</option>
+                  <option id="multi">Multiple Choice</option>
+                  <option id="boolean">True / False</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success">Start Game</button>
+          <button class="button close">Cancel</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Prompt Modal -->
+    <div class="modal" id="prompt-modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <article class="media">
+            <div class="media-content">
+              <div class="media-left">
+                <button
+                  class="delete close is-pulled-right"
+                  aria-label="close"
+                ></button>
+              </div>
+              <div class="content">
+                <p id="promptContent"></p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <!-- jquery -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.min.js"
+      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+      crossorigin="anonymous"
+    ></script>
+    <!-- local js script file -->
     <script src="assets/js/script.js"></script>
-</body>
+  </body>
 </html>
