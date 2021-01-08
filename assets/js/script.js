@@ -14,12 +14,14 @@ var generateToken = function () {
           saveToken(data.token);
         });
       } else {
-        alert("Error: " + response.statusText);
+        $("#prompt-modal").addClass("is-active is-clipped");
+        promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to api");
+      $("#prompt-modal").addClass("is-active is-clipped");
+      promptContent.textContent = "Unable to connect to api";
     });
 };
 
@@ -51,12 +53,14 @@ var resetToken = function (difficulty, type, category, token) {
           getQuestionsData(difficulty, type, category, token);
         });
       } else {
-        alert("Error: " + response.statusText);
+        $("#prompt-modal").addClass("is-active is-clipped");
+        promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to api");
+      $("#prompt-modal").addClass("is-active is-clipped");
+      promptContent.textContent = "Unable to connect to api";
     });
 };
 
@@ -75,20 +79,31 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
       // request was successful
       if (response.ok) {
         response.json().then(function (data) {
+          console.log(data);
           // check if we need to reset token
-          if (data.response_code === 4) {
-            resetToken(difficulty, type, category, token);
+          if (
+            data.response_code === 1 ||
+            (data.response_code === 4 && data.results.length === 0)
+          ) {
+            console.log("test");
+            $("#prompt-modal").addClass("is-active is-clipped");
+            promptContent.textContent =
+              "Sorry, not enough questions, please change your selections!";
+            $("#start-modal").addClass("is-active is-clipped");
+            generateCategory();
+          } else if (data.response_code === 4) {
+            resetToken(
+              difficulty,
+              type,
+              category,
+              localStorage.getItem("token")
+            );
             // check to see if the session token is valid, if it is not generate a new one and run function again
           } else if (data.response_code === 3) {
             generateToken();
             var token = localStorage.getItem("token");
             getQuestionsData(difficulty, type, category, token);
             // check if there are enough questions for the current request
-          } else if (data.response_code === 1) {
-            alert(
-              "Sorry, not enough questions, please change your selections!"
-            );
-            return;
           } else {
             // get array of objects to hold the data we need
             var questions = [];
@@ -123,12 +138,14 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
           }
         });
       } else {
-        alert("Error: " + response.statusText);
+        $("#prompt-modal").addClass("is-active is-clipped");
+        promptContent.textContent = "Error: " + response.statusText;
         return;
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to api");
+      $("#prompt-modal").addClass("is-active is-clipped");
+      promptContent.textContent = "Unable to connect to api";
     });
 };
 
@@ -186,7 +203,6 @@ var displayQuestions = function (
         } else {
           score = score + 5;
         }
-        console.log(score);
         var apiUrl =
           "https://api.giphy.com/v1/gifs/random?tag=thumbsup&rating=g&api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
         fetch(apiUrl)
@@ -201,12 +217,14 @@ var displayQuestions = function (
                 $("#gif-ctn").append(gifImgEl);
               });
             } else {
-              alert("Error: " + response.statusText);
+              $("#prompt-modal").addClass("is-active is-clipped");
+              promptContent.textContent = "Error: " + response.statusText;
               return;
             }
           })
           .catch(function (error) {
-            alert("Unable to connect to api");
+            $("#prompt-modal").addClass("is-active is-clipped");
+            promptContent.textContent = "Unable to connect to api";
           });
       } else {
         if (userDifficulty === "&difficulty=easy") {
@@ -216,7 +234,6 @@ var displayQuestions = function (
         } else {
           score = score - 3;
         }
-        console.log(score);
         //get thumbs down gif
         apiUrl =
           "https://api.giphy.com/v1/gifs/random?tag=thumbsdown&rating=g&api_key=s41LdJZmruKfK6XHNXkpp7s8fFJ70xnE";
@@ -232,12 +249,14 @@ var displayQuestions = function (
                 $("#gif-ctn").append(gifImgEl);
               });
             } else {
-              alert("Error: " + response.statusText);
+              $("#prompt-modal").addClass("is-active is-clipped");
+              promptContent.textContent = "Error: " + response.statusText;
               return;
             }
           })
           .catch(function (error) {
-            alert("Unable to connect to api");
+            $("#prompt-modal").addClass("is-active is-clipped");
+            promptContent.textContent = "Unable to connect to api";
           });
       }
       $("#question").empty();
@@ -312,7 +331,8 @@ var generateCategory = function () {
       if (categoryResponse.ok) {
         return categoryResponse.json();
       } else {
-        alert("Error: " + categoryResponse.statusText);
+        $("#prompt-modal").addClass("is-active is-clipped");
+        promptContent.textContent = "Error: " + categoryResponse.statusText;
       }
     })
     .then(function (categoryResponse) {
@@ -325,7 +345,8 @@ var generateCategory = function () {
       }
     })
     .catch(function (error) {
-      alert("Unable to connect to Trivia API");
+      $("#prompt-modal").addClass("is-active is-clipped");
+      promptContent.textContent = "Unable to connect to Trivia API";
     });
 };
 
@@ -373,6 +394,7 @@ $("#start-modal .close").on("click", function () {
 // close prompt modal
 $("#prompt-modal .close").on("click", function () {
   $("#prompt-modal").removeClass("is-active is-clipped");
+
   promptContent.textContent = "";
 });
 
