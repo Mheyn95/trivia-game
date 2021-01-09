@@ -67,7 +67,7 @@ var resetToken = function (difficulty, type, category, token) {
 // function to get question data based on user selections and to start and display timer
 var getQuestionsData = function (difficulty, type, category, token, name) {
   var apiUrl =
-    "https://opentdb.com/api.php?amount=1" +
+    "https://opentdb.com/api.php?amount=10" +
     category +
     difficulty +
     type +
