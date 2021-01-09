@@ -164,6 +164,7 @@ var displayQuestions = function (
         clearInterval(timeCounter);
         $("#timer-ctn").empty();
         endGame(name, timeoutScore);
+        return;
       }
       $("#timer-ctn").empty();
       var timerDiv = document.createElement("p");
@@ -286,6 +287,7 @@ var endGame = function (name, score) {
   // get rid of timer and remove it
   clearInterval(timeCounter);
   $("#quiz-ctn").empty();
+  timeLeft = 120;
 
   //set up our score display
   var newScore = {
