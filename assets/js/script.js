@@ -79,13 +79,11 @@ var getQuestionsData = function (difficulty, type, category, token, name) {
       // request was successful
       if (response.ok) {
         response.json().then(function (data) {
-          console.log(data);
           // check if we need to reset token
           if (
             data.response_code === 1 ||
             (data.response_code === 4 && data.results.length === 0)
           ) {
-            console.log("test");
             $("#prompt-modal").addClass("is-active is-clipped");
             promptContent.textContent =
               "Sorry, not enough questions, please change your selections!";
@@ -306,19 +304,28 @@ var endGame = function (name, score) {
     } else {
       scores = JSON.parse(scores);
       scores.push(newScore);
-      scores.sort((a, b) => (a.score > b.score ? 1 : -1));
+      scores = scores.sort((a, b) => (a.score < b.score ? 1 : -1));
     }
   }
 
   // store all scores back into localStorage
   localStorage.setItem("scores", JSON.stringify(scores));
 
-  // display all scores on the page
-  for (i = 0; i < scores.length; i++) {
-    var scoreLi = document.createElement("li");
-    scoreLi.textContent = scores[i].combo;
-    $("#score-ctn").prepend(scoreLi);
+  // display all scores on the page if there are less than 10 scores, only display the top 10 if there are more than 10 scores
+  if (scores.length <= 10) {
+    for (i = 0; i < scores.length; i++) {
+      var scoreLi = document.createElement("li");
+      scoreLi.textContent = scores[i].combo;
+      $("#score-ctn").append(scoreLi);
+    }
+  } else {
+    for (i = 0; i < 10; i++) {
+      var scoreLi = document.createElement("li");
+      scoreLi.textContent = scores[i].combo;
+      $("#score-ctn").append(scoreLi);
+    }
   }
+
   $("#reload-btn").removeClass("is-hidden");
   $("#clear-btn").removeClass("is-hidden");
 };
