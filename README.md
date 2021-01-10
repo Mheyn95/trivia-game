@@ -16,7 +16,7 @@ https://mheyn95.github.io/trivia-game/
 
 ## Screenshot
 
-![Trivia Game Screen Shot](./assets/images/screenshot.png "Trivia Game Screen Shot")
+![Trivia Game Screen Shot](./assets/images/Screenshot.png "Trivia Game Screen Shot")
 
 ### Authors
 
